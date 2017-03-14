@@ -10,7 +10,8 @@ var apiRoutes = express.Router();
 // Protect dashboard route with JWT
 apiRoutes.use(passport.authenticate('jwt', { session: false }));
 
-apiRoutes.get('/userdata', function(req, res) {  
+apiRoutes.get('/profile', function(req, res) { 
+  console.log(req.user) 
   res.json({
       "id" : req.user._id,
       "email": req.user.email,

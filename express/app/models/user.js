@@ -23,9 +23,10 @@ var UserSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['Viewer', 'Responder', 'Poster', 'Manager', 'Admin'],
-        default: 'Responder'
-    }
+        enum: ['viewer', 'responder', 'dispatcher', 'moderator', 'admin'],
+        default: 'responder',
+        lowercase: true,
+    },
 });
 
 //Hasing of the password

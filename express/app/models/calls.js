@@ -6,7 +6,7 @@ var CallSchema = new Schema({
     title: String,
     details: String,
     taken: Boolean,
-    finished: Boolean,
+    finished: {type: Boolean, index: true},
     Caller: {
         Location: String,
         Name: String,

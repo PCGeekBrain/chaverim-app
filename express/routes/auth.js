@@ -8,25 +8,26 @@ var passport = require('passport');
 var authRoutes = express.Router();
 
 // Authenticate the user and get a JSON Web Token to include in the header of future requests.
-authRoutes.post('/authenticate', function(req, res) {  
-  User.findOne({
-    email: req.body.email
-  }, function(err, user) {
-    if (err) throw err;
+authRoutes.post('/authenticate', function (req, res) {
+  //Find the user
+  User.findOne({ email: req.body.email }, function (err, user) { //When found
+    if (err) throw err; //if there is an error burn the world why not?
 
-    if (!user) {
-      res.send({ success: false, message: 'Authentication failed. User not found.' });
-    } else {
+    if (!user) {  //if there is no user send a letter home saying that it failed.
+      res.send({ success: false, message: 'Authentication failed.' });
+    } else {  //We have a correct username now...
       // Check if password matches
-      user.comparePassword(req.body.password, function(err, isMatch) {
+      user.comparePassword(req.body.password, function (err, isMatch) {
         if (isMatch && !err) {
           // Create token if the password matched and no error was thrown
           var token = jwt.sign(user, config.secret, {
             expiresIn: 10080 // in seconds
-          });
-          res.json({ success: true, token: 'JWT ' + token });
+          }); 
+          //Yey! we have a token for some time. here it is along will all your information becuase if a hacker gets this far he deserves it too no? (Chill its for debugging)
+          res.json({ success: true, name: user.name, number: user.number, role: user.role, token: 'JWT ' + token });
         } else {
-          res.send({ success: false, message: 'Authentication failed. Passwords did not match.' });
+          // should we tell him the username is good?
+          res.send({ success: false, message: 'Authentication failed.' });
         }
       });
     }
@@ -34,45 +35,106 @@ authRoutes.post('/authenticate', function(req, res) {
 });
 
 // Protect editing routes with JWT
-authRoutes.use('/edit', passport.authenticate('jwt', { session: false }));
+authRoutes.use('/users', passport.authenticate('jwt', { session: false }));
 
-authRoutes.post('/edit/change', function(req, res){
-  if ((req.user.role == "Admin" || req.user.role == "Manager") && (!req.body.field || !req.body.value || !req.body.useremail)) {
-    res.json({
-      "Status": "Coming Soon",
-      "Request": {
-        "User": req.body.useremail,
-        "Field": req.body.field,
-        "Value": req.body.value,
-      }
-    });
+authRoutes.get('/users', function(req, res){
+  if (req.user.role == "admin" || req.user.role == 'moderator'){
+    User.find({}, function(err, users){
+      if (err) throw err;
+      res.json({success: true, message: "Successfull listing of users", users: users})
+    })
   } else {
-    res.json({success: false, message: "Invalid Request"})
+    res.json({success: false, message: "Invalid Account Permissions"})
   }
 });
 
-/* GET users listing. */
-authRoutes.post('/edit/add', function(req, res) {  
-  if(req.user.role != "Admin"){
-    res.status(403).json({success: false, message: 'You do not have permission to add users'});
-  } else if(!req.body.email || !req.body.password || !req.body.name || !req.body.number){
-    res.json({success: false, message: 'Please submit email, password, name and number'});
-  } else {
-    var newUser = new User({
-      email: req.body.email,
-      password: req.body.password,
-      name: req.body.name,
-      number: req.body.number,
-    });
+/** PUT updates user data (admin, moderator)
+ * Needs user, field, value
+ */
+authRoutes.put('/users', function (req, res) { 
+  if (req.user.role == "admin" || req.user.role == 'moderator') { //Only admins and mods past this point
+    if (req.body.field && req.body.value && req.body.user) {  //make sure we have what we need
+      User.findOne({ email: req.body.user }, function (err, user) {  //find the user with that email address
+        if (err) throw err;
+        if (!user) {  // user does not exist
+          res.send({ success: false, message: 'User not found.' });
+        } else {
+          let field = req.body.field;
 
-    newUser.save(function(err){
-      if (err) {
-        return res.json({success: false, message: 'That email address already exists.'});
-      }
-      res.json({
-        success: true, message: 'Successfully created a new user.'
+          if (field == 'name') {
+            user.name = req.body.value;
+            user.save(function (err) {
+              if (err) { return res.json({ success: false, message: 'Error updating name', error: err}); }
+              res.json({ success: true, message: 'Successfully updated name', user: user });
+            });
+          } else if (field == 'number') {
+            user.number = req.body.value;
+            user.save(function (err) {
+              if (err) { return res.json({ success: false, message: 'Error updating number', error: err}); }
+              res.json({ success: true, message: 'Successfully updated number', user: user });
+            });
+          } else if (field == 'role'){
+            if (user.schema.path('role').enumValues.indexOf(req.body.value) >= 0){
+              user.role = req.body.value;
+              user.save(function (err) {
+                if (err) { return res.json({ success: false, message: 'Error updating role', error: err }); }
+                res.json({ success: true, message: 'Successfully updated role', user: user });
+              });
+            } else {
+              res.json({ success: false, message: 'Invalid role' });
+            }
+          } else {
+            res.json({ success: false, message: 'Invalid Field' });
+          }
+        }
       });
-    })
+    } else {
+      res.json({success: false, message: "Please supply the user (email), field and value you want to edit"});
+    }
+  } else {
+    res.json({ success: false, message: "Invalid Account Permissions" })
+  }
+});
+
+/** POST a new user. (Admin)
+ * Needs email, password, name, number
+ */
+authRoutes.post('/users', function (req, res) {  //
+  if (req.user.role == 'admin') {
+    if (!req.body.email || !req.body.password || !req.body.name || !req.body.number) {
+      res.json({ success: false, message: 'Please submit email, password, name and number' })
+    } else {
+      var newUser = new User({
+        email: req.body.email,
+        password: req.body.password,
+        name: req.body.name,
+        number: req.body.number,
+      });
+
+      newUser.save(function (err) {
+        if (err) {
+          return res.json({ success: false, message: 'That email address already exists.' })
+        }
+        res.json({
+          success: true, message: 'Successfully created a new user.'
+        });
+      });
+    };
+  } else {
+    res.json({ success: false, message: 'Invalid Account Permissions', role: req.user.role })
+  };
+});
+
+/** Delete an exisiting user (Admin)
+ * Needs user
+*/
+authRoutes.delete('/users', function(req, res){
+  if (req.user.role == 'admin' && req.body.user){
+    User.findOne({email: req.body.user}, function(err, user){
+      if(err) {return res.json({success: false, message: "Error getting user", user: req.body.user})};
+      user.remove();
+      res.json({success: true, message:"Successfully deleted user", user: user})
+    });
   }
 });
 
