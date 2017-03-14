@@ -1,12 +1,15 @@
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
+var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var passport = require('passport');
-var jwt = require('jsonwebtoken');
+var config = require('./config/main')
+
 var index = require('./routes/index');
-var users = require('./routes/users');
+var apiRoutes = require('./routes/api');
+var authroutes = require('./routes/auth')
 
 var app = express();
 
@@ -24,11 +27,22 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Log requests to console
 app.use(morgan('dev'));
 
+//initialize passport for use
+app.use(passport.initialize());
+
+//Connect to DB
+mongoose.connect(config.database)
+
+//bring in passport strategy
+require('./config/passport')(passport);
+
+
 //Serve Static files
 //nooapp.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/auth', authroutes)
+app.use('/api', apiRoutes)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
