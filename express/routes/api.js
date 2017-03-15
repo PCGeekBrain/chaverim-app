@@ -2,8 +2,8 @@ var express = require('express');
 var config = require("../config/main");
 var jwt = require('jsonwebtoken');
 var passport = require('passport');
-var CallRoutes = require('./calls.js')
-var User = require('../app/models/user')
+var CallRoutes = require('./calls.js');
+var TakeRoutes = require('./take');
 
 //Create The Router
 var apiRoutes = express.Router();
@@ -13,6 +13,7 @@ apiRoutes.use(passport.authenticate('jwt', { session: false }));
 
 // Add the calling api
 apiRoutes.use('/calls', CallRoutes);
+apiRoutes.use('/calls/take', TakeRoutes);
 
 apiRoutes.get('/profile', function(req, res) {
   res.json({
