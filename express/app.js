@@ -38,7 +38,7 @@ require('./config/passport')(passport);
 
 
 //Serve Static files
-//nooapp.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/auth', authroutes)

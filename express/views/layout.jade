@@ -2,6 +2,31 @@ doctype html
 html
   head
     title= title
+    title= title
+    link(rel='stylesheet', href='/bootstrap/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    block style
   body
-    block content
+    block navbar
+      .navbar.navbar-default
+        .container
+          .navbar-header
+            a(href="#").navbar-brand Chaverim of Crown Heights
+          a(href="#").navbar-text.navbar-right Admin
+    .content
+      block content
+
+    footer
+      .container
+        .row
+          .col-md-4
+            p &copy; Chaverim of CH 2017
+          .col-md-4
+            p
+              a(href="#") Join us
+          .col-md-4
+            p Some random text that is not lorem ipsum
+
+    
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js')
+    script(src='/bootstrap/js/bootstrap.min.js')

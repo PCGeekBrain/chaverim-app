@@ -1,8 +1,25 @@
+/*Site wide styles*/
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
 a {
   color: #00B7FF;
+}
+/*Navbar*/
+.navbar{
+  margin: 0;
+}
+/*Other items*/
+/*Footer*/
+footer{
+  width: 100%;
+  background: #333;
+  text-align: center;
+  color: #fff;
+}
+
+
+footer .container{
+  padding-top: 40px;
+  padding-bottom: 30px;
 }

@@ -1,0 +1,32 @@
+.jumbotron.intro{
+    background: url("../images/770.jpg") no-repeat center;
+    background-size: cover;
+}
+.container.intro{
+    background: rgba(0,0,0,.1);
+    color: #eee;
+}
+
+h1.center{
+    text-align: center;
+    border-bottom: 5px double #ccc;
+    padding: 10px;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    margin-bottom: 35px;
+    border-radius: 10px;
+}
+.form-group label{
+    margin-top: 15px;
+}
+.form-group .submit{
+    margin: 10px 0;
+    text-align: center;
+}
+.form-group .btn{
+    padding: 10px 30px;
+}
