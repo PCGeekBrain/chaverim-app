@@ -6,13 +6,13 @@ var CallSchema = new Schema({
     title: String,
     details: String,
     taken: Boolean,
-    finished: {type: Boolean, index: true},
-    Caller: {
-        Location: String,
-        Name: String,
-        Number: String,
+    finished: {type: Boolean, index: true, default: false},
+    caller: {
+        location: String,
+        name: String,
+        number: String,
     },
-    ResponderId: String,
+    responderId: String,
 });
 
 

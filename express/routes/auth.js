@@ -20,9 +20,9 @@ authRoutes.post('/authenticate', function (req, res) {
       user.comparePassword(req.body.password, function (err, isMatch) {
         if (isMatch && !err) {
           // Create token if the password matched and no error was thrown
-          var token = jwt.sign(user, config.secret, {
-            expiresIn: 10080 // in seconds
-          }); 
+          var token = jwt.sign({id: user._id.toString()}, config.secret, {
+            expiresIn: '1h',
+          });
           //Yey! we have a token for some time. here it is along will all your information becuase if a hacker gets this far he deserves it too no? (Chill its for debugging)
           res.json({ success: true, name: user.name, number: user.number, role: user.role, token: 'JWT ' + token });
         } else {
@@ -37,9 +37,10 @@ authRoutes.post('/authenticate', function (req, res) {
 // Protect editing routes with JWT
 authRoutes.use('/users', passport.authenticate('jwt', { session: false }));
 
+/** GET all the users (admin, moderator)*/
 authRoutes.get('/users', function(req, res){
   if (req.user.role == "admin" || req.user.role == 'moderator'){
-    User.find({}, function(err, users){
+    User.find({}, { password: 0, __v: 0}, function(err, users){
       if (err) throw err;
       res.json({success: true, message: "Successfull listing of users", users: users})
     })
@@ -54,7 +55,7 @@ authRoutes.get('/users', function(req, res){
 authRoutes.put('/users', function (req, res) { 
   if (req.user.role == "admin" || req.user.role == 'moderator') { //Only admins and mods past this point
     if (req.body.field && req.body.value && req.body.user) {  //make sure we have what we need
-      User.findOne({ email: req.body.user }, function (err, user) {  //find the user with that email address
+      User.findOne({ email: req.body.user }, { password: 0, __v: 0}, function (err, user) {  //find the user with that email address
         if (err) throw err;
         if (!user) {  // user does not exist
           res.send({ success: false, message: 'User not found.' });
@@ -72,6 +73,12 @@ authRoutes.put('/users', function (req, res) {
             user.save(function (err) {
               if (err) { return res.json({ success: false, message: 'Error updating number', error: err}); }
               res.json({ success: true, message: 'Successfully updated number', user: user });
+            });
+          } else if (field == 'password'){
+            user.password = req.body.value;
+            user.save(function (err) {
+              if (err) { return res.json({ success: false, message: 'Error updating password', error: err}); }
+              res.json({ success: true, message: 'Successfully updated password', user: user });
             });
           } else if (field == 'role'){
             if (user.schema.path('role').enumValues.indexOf(req.body.value) >= 0){
@@ -113,7 +120,7 @@ authRoutes.post('/users', function (req, res) {  //
 
       newUser.save(function (err) {
         if (err) {
-          return res.json({ success: false, message: 'That email address already exists.' })
+          return res.json({ success: false, message: 'That email address already exists.' });
         }
         res.json({
           success: true, message: 'Successfully created a new user.'
@@ -121,7 +128,7 @@ authRoutes.post('/users', function (req, res) {  //
       });
     };
   } else {
-    res.json({ success: false, message: 'Invalid Account Permissions', role: req.user.role })
+    res.json({ success: false, message: 'Invalid Account Permissions', role: req.user.role });
   };
 });
 
@@ -129,12 +136,17 @@ authRoutes.post('/users', function (req, res) {  //
  * Needs user
 */
 authRoutes.delete('/users', function(req, res){
-  if (req.user.role == 'admin' && req.body.user){
-    User.findOne({email: req.body.user}, function(err, user){
-      if(err) {return res.json({success: false, message: "Error getting user", user: req.body.user})};
-      user.remove();
-      res.json({success: true, message:"Successfully deleted user", user: user})
-    });
+  if (req.user.role == 'admin'){
+    if (req.body.user){
+      User.findOneAndRemove({email: req.body.user}, { password: 0, __v: 0}, function(err, user){
+        if(err) {return res.json({success: false, message: "Error getting user", user: req.body.user})};
+        res.json({success: true, message:"Successfully deleted user", user: user});
+      });
+    } else{
+      res.json({ success: false, message: 'Please provide user', user: req.body.user });
+    }
+  } else {
+    res.json({ success: false, message: 'Invalid Account Permissions', role: req.user.role });
   }
 });
 

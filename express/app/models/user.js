@@ -27,6 +27,7 @@ var UserSchema = new mongoose.Schema({
         default: 'responder',
         lowercase: true,
     },
+    devices: [String],
 });
 
 //Hasing of the password
