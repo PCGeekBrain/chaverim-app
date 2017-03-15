@@ -13,6 +13,10 @@ var CallSchema = new Schema({
         number: String,
     },
     responderId: String,
+    responder: {
+        name: String,
+        number: String,
+    },
 });
 
 
