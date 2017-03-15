@@ -17,6 +17,7 @@ var CallSchema = new Schema({
         name: String,
         number: String,
     },
+    createdAt: { type : Date, default: Date.now },
 });
 
 

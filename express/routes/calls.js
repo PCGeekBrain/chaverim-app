@@ -11,15 +11,15 @@ var CallRoutes = express.Router();
  */
 CallRoutes.get('/', function(req, res){
     Call.find({finished: false}, {__v: 0}, function(err, calls){
-        if(err){return res.json(500, {success: false, error: err})};
-        res.json(200, {success: true, calls: calls});
+        if(err){return res.status(500).json({success: false, error: err})};
+        res.status(200).json({success: true, calls: calls});
     });
 });
 
 CallRoutes.get('/all', function(req, res){
     Call.find({}, function(err, calls){
-        if(err){return res.json(500, {success: false, error: err})};
-        res.json(200, {success: true, calls: calls});
+        if(err){return res.status(500).json({success: false, error: err})};
+        res.status(200).json({success: true, calls: calls});
     });
 })
 
@@ -30,7 +30,7 @@ CallRoutes.get('/all', function(req, res){
 CallRoutes.post('/', function(req, res){
     if (['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
         if (!req.body.title && !req.body.details && !req.body.location && !req.body.name && !req.body.number){
-            return res.json(400, {success: false, message: "No information given"})
+            return res.status(400).json({success: false, message: "No information given"})
         }
         let call = new Call({
             title: req.body.title,
@@ -43,9 +43,9 @@ CallRoutes.post('/', function(req, res){
         });
         call.save(function(err, call, rows_affected){
             if (err) {
-                return res.json(500, {success: false, message: "Server Error"})
+                return res.status(500).json({success: false, message: "Server Error"})
             } else{
-                res.json(200, {success: true, call: call, rows_affected: rows_affected});
+                res.json({success: true, call: call, rows_affected: rows_affected});
             }
         });
         
@@ -63,17 +63,17 @@ CallRoutes.delete('/', function(req, res){
     if (['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
         console.log(req.body)
         Call.findOneAndRemove({_id: req.body.id}, function(err, call){
-            if (err) {return res.json(500, {success: false, error, err, message: "Internal Server Error"})};
+            if (err) {return res.status(500).json({success: false, error, err, message: "Internal Server Error"})};
             if (call == null){
-                return res.json(400, {success: false, message: "User Does not exist", id: req.body.id})
+                return res.status(400).json({success: false, message: "User Does not exist", id: req.body.id})
             } else {
-                res.json(200, {success: true, call: call});
+                res.status(200).json({success: true, call: call});
             }
         });
         
         //TODO send notificaiton to all users
     } else {
-        res.json({success: false, message: 'Invalid Account Permissions'});
+        res.status(403).json({success: false, message: 'Invalid Account Permissions'});
     }
 });
 
