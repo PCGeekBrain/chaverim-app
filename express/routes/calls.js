@@ -6,15 +6,32 @@ var Call = require('../app/models/call');
 
 var CallRoutes = express.Router();
 
+/**
+ * GET -> Returns list of unfinished calls
+ */
 CallRoutes.get('/', function(req, res){
     Call.find({finished: false}, {__v: 0}, function(err, calls){
-        if(err){return res.json({success: false, error: err})};
-        res.json({success: true, calls: calls});
+        if(err){return res.json(500, {success: false, error: err})};
+        res.json(200, {success: true, calls: calls});
     });
 });
 
+CallRoutes.get('/all', function(req, res){
+    Call.find({}, function(err, calls){
+        if(err){return res.json(500, {success: false, error: err})};
+        res.json(200, {success: true, calls: calls});
+    });
+})
+
+/**
+ * POST -> adds a call, dispatcher or higher required
+ * body: title, details, location, name, number
+ */
 CallRoutes.post('/', function(req, res){
     if (['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
+        if (!req.body.title && !req.body.details && !req.body.location && !req.body.name && !req.body.number){
+            return res.json(400, {success: false, message: "No information given"})
+        }
         let call = new Call({
             title: req.body.title,
             details: req.body.details,
@@ -24,19 +41,34 @@ CallRoutes.post('/', function(req, res){
                 number: req.body.number,
             },
         });
-        call.save();
-        res.json({success: true, call: call});
+        call.save(function(err, call, rows_affected){
+            if (err) {
+                return res.json(500, {success: false, message: "Server Error"})
+            } else{
+                res.json(200, {success: true, call: call, rows_affected: rows_affected});
+            }
+        });
+        
         //TODO send notificaiton to all users
     } else {
         res.json({success: false, message: 'Invalid Account Permissions'});
     }
 });
 
+/**
+ * DELETE -> Delete a call from the system, moderator or higher
+ * body: id
+ */
 CallRoutes.delete('/', function(req, res){
-    if (['moderator', 'admin'].indexOf(req.user.role) >= 0){
+    if (['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
+        console.log(req.body)
         Call.findOneAndRemove({_id: req.body.id}, function(err, call){
-            if (err) {res.json({success: false, error, err})};
-            res.json({success: true, call: call});
+            if (err) {return res.json(500, {success: false, error, err, message: "Internal Server Error"})};
+            if (call == null){
+                return res.json(400, {success: false, message: "User Does not exist", id: req.body.id})
+            } else {
+                res.json(200, {success: true, call: call});
+            }
         });
         
         //TODO send notificaiton to all users
