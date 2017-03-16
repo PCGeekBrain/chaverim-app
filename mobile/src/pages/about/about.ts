@@ -8,13 +8,11 @@ import 'rxjs/add/operator/map';
   templateUrl: 'about.html'
 })
 export class AboutPage {
-  items: any[];
 
   constructor(public http: Http, public events: Events,
               public navCtrl: NavController) {
-      this.items = [];
       this.events.subscribe("item:taken", (item) => {
-        this.items.push(item)
+        alert(item);
       })
   }
 

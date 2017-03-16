@@ -61,6 +61,7 @@ CallRoutes.post('/', function(req, res){
                             number: req.user.number,
                         };
                         call.responderId = req.user._id;
+                        call.taken = true;
                         call.save(function(err, call, numAffected){
                             if(err){
                                 return res.status(500).json({success: false, error: err, message: "Internal Server Error"});
@@ -84,10 +85,10 @@ CallRoutes.post('/', function(req, res){
 CallRoutes.put('/', function(req, res){
     Call.findOne({_id: req.body.id}, function(err, call){
         if (err) {
-            return res.status(500).json({success: false, message: "Internal Server Error"})
+            return res.status(500).json({success: false, message: "Internal Server Error"});
         } else if (call.responderId == req.user._id || ['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
             if (call.finished){
-                return res.status(400).json({success: false, message: "Call already compleated"})
+                return res.status(400).json({success: false, message: "Call already compleated"});
             }
             call.finished = true;
             call.save(function(err, call, rows_affected){
@@ -97,7 +98,7 @@ CallRoutes.put('/', function(req, res){
         } else {
             res.status(400).json({
                 success: false,
-                message: "You cannot complete other responders calls"
+                message: "You cannot complete other responders calls",
             })
         }
     });
@@ -111,19 +112,20 @@ CallRoutes.delete('/', function(req, res){
         Call.findOne({_id: req.body.id}, function(err, call){
             if (err) {res.status(500).json({success: false, error: err, message: "Internal Server Error"})};
             if (call.responderId == req.user._id || ['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
-                call.responder = {},
-                call.responderId = "",
+                call.responder = {};
+                call.responderId = "";
+                call.taken = false;
                 call.save(function(err, call, rows_affected){
                     if (err) {res.status(500).json({success: false, error: err , message: "Internal Server Error"})};
-                    res.status(200).json({success: true, call: call, rows_affected: rows_affected})
+                    res.status(200).json({success: true, call: call, rows_affected: rows_affected});
                 });
             } else {
-                return res.status(400).json({success: false, message: "Cannot drop other responders calls"})
+                return res.status(400).json({success: false, message: "Cannot drop other responders calls"});
             }
         });
         //TODO send notificaiton to all users
     } else {
-        res.status(403).json({success: false, message: 'Invalid Account Permissions'})
+        res.status(403).json({success: false, message: 'Invalid Account Permissions'});
     }
 });
 

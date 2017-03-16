@@ -7,32 +7,9 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item-sliding *ngFor="let item of items">
-      <ion-item>
-        <ion-icon name="alert" *ngIf="!item.taken" item-left></ion-icon>
-        <ion-icon name="checkmark-circle-outline" *ngIf="item.taken" item-left></ion-icon>
-        <h2><b>{{item.title}}</b></h2>
-        <h3>{{item.name}} | {{item.number}}</h3>
-        <h3><b>{{item.location}}</b></h3>
-        <h3 style="white-space: normal;"><b>Details:</b> {{item.text}}</h3>
-      </ion-item>
-      <ion-item-options side="left">
-        <button ion-button color="primary" (click)="smsPressed(item)">
-          <ion-icon name="text"></ion-icon>
-          Text
-        </button>
-        <button ion-button color="secondary" (click)="phonePressed(item)">
-          <ion-icon name="call"></ion-icon>
-          Call
-        </button>
-      </ion-item-options>
-      <ion-item-options side="right">
-        <button ion-button color="primary">
-          <ion-icon name="person"></ion-icon>
-          Responder
-        </button>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+  <div class="icon">
+    <ion-icon name="alert"></ion-icon>
+    <h1>{{title}}</h1>
+    <p>{{details}}</p>
+  </div>
 </ion-content>

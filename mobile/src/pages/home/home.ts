@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController, Events } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
+import { getToken } from '../../networking/auth';
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -11,7 +13,7 @@ export class HomePage {
   items: any[];
 
   constructor(public events: Events, public http: Http,
-              public navCtrl: NavController, 
+              public navCtrl: NavController, public storage: Storage,
               public alertCtrl: AlertController) {
     this.items = [];
     this.items.push({
@@ -36,12 +38,11 @@ export class HomePage {
       });
   }
 
-  buttonPressed(item){
-    alert(item.title);
-  }
-
   smsPressed(item){
-    alert(item.number);
+    //Working import
+    getToken(this.http, this.storage).then((res) => {
+      alert('res =>' + res);
+    });
   }
 
   phonePressed(item){

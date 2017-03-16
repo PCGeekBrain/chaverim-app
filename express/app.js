@@ -36,6 +36,12 @@ mongoose.connect(config.database)
 //bring in passport strategy
 require('./config/passport')(passport);
 
+//Allow CORS
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 //Serve Static files
 app.use(express.static(path.join(__dirname, 'public')));

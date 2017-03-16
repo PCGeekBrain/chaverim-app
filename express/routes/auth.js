@@ -109,7 +109,7 @@ authRoutes.put('/users', function (req, res) {
 /** POST a new user. (Admin)
  * Needs email, password, name, number
  */
-authRoutes.post('/users', function (req, res) {  //
+authRoutes.post('/users', function (req, res) {
   if (req.user.role == 'admin') {
     if (!req.body.email || !req.body.password || !req.body.name || !req.body.number) {
       res.status(400).json({ success: false, message: 'Missing Information', request_body: req.body })

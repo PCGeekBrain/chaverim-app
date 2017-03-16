@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var CallSchema = new Schema({
     title: String,
     details: String,
-    taken: Boolean,
+    taken: {type: Boolean, default: false},
     finished: {type: Boolean, index: true, default: false},
     caller: {
         location: String,
