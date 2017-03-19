@@ -108,8 +108,8 @@ CallRoutes.put('/', function(req, res){
  * DELETE -> Allows user to drop a call that was picked up.
  */
 CallRoutes.delete('/', function(req, res){
-    if (['responder', 'dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0 && req.body.id){
-        Call.findOne({_id: req.body.id}, function(err, call){
+    if (['responder', 'dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0 && req.headers.id){
+        Call.findOne({_id: req.headers.id}, function(err, call){
             if (err) {res.status(500).json({success: false, error: err, message: "Internal Server Error"})};
             if (call.responderId == req.user._id || ['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
                 call.responder = {};

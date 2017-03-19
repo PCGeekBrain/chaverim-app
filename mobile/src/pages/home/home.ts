@@ -3,6 +3,7 @@ import { NavController, AlertController, Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { getToken } from '../../networking/auth';
+import { getCalls } from '../../networking/calls'
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -11,42 +12,36 @@ import 'rxjs/add/operator/map';
 })
 export class HomePage {
   items: any[];
+  canEdit: Boolean;
+  loggedIn: Boolean;
 
   constructor(public events: Events, public http: Http,
               public navCtrl: NavController, public storage: Storage,
               public alertCtrl: AlertController) {
-    this.items = [];
-    this.items.push({
-        title: "Title",
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pretium quam at est porta fringilla.",
-        name: "Sam",
-        number: "(555) 555-5555",
-        location: "55 Arbor Way",
-        taken: true,
-        responder: {
-          name: "Bob",
-          phone: "(666) 666-6666"
-        }
+    // Get all the items from storage
+    storage.ready().then(() => {
+      storage.get('canEdit').then((res) => {
+        this.canEdit = res;
       });
-      this.items.push({
-        title: "Stuff",
-        text: "Take Now",
-        name: "Sam",
-        number: "(555) 555-5555",
-        taken: false,
-        responder: {}
-      });
-  }
-
-  smsPressed(item){
-    //Working import
-    getToken(this.http, this.storage).then((res) => {
-      alert('res =>' + res);
+      // storage.get('logged_In').then((res) => {
+      //   this.loggedIn = res;
+      // });
     });
+    this.canEdit = true;
+    this.loggedIn = true;
+    //Fill up the list
+    this.items = [];
+    getCalls(http, storage).then((res) => {
+      this.items = res;
+      console.log(this.items);
+    })
   }
 
-  phonePressed(item){
-    alert(item.number);
+  joinCall(item){
+    //Working import
+    //getToken(this.http, this.storage).then((res) => {
+    //  alert('res =>' + res);
+    //});
   }
 
   responderPressed(item){
@@ -67,14 +62,9 @@ export class HomePage {
   }
 
   updateData(){
-    this.items.unshift({
-      title: "Added",
-      text: "Take Now",
-      name: "Sam",
-      number: "(555) 555-5555",
-      taken: false,
-      responder: {}
-    })
+    getCalls(this.http, this.storage).then((res) => {
+      this.items = res;
+    });
   }
 
   addItem(){

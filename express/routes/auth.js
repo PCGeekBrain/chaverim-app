@@ -11,6 +11,7 @@ var authRoutes = express.Router();
 // Authenticate the user and get a JSON Web Token to include in the header of future requests.
 authRoutes.post('/authenticate', function (req, res) {
   //Find the user
+  console.log(req.body);
   User.findOne({ email: req.body.email }, function (err, user) { //When found
     if (err) morgan(err); //if there is an error burn the world why not?
 
@@ -138,9 +139,9 @@ authRoutes.post('/users', function (req, res) {
 */
 authRoutes.delete('/users', function(req, res){
   if (req.user.role == 'admin'){
-    if (req.body.user){
-      User.findOneAndRemove({email: req.body.user}, { password: 0, __v: 0}, function(err, user){
-        if(err) {return res.status(500).json({success: false, message: "Error getting user", user: req.body.user})};
+    if (req.headers.user){
+      User.findOneAndRemove({email: req.headers.user}, { password: 0, __v: 0}, function(err, user){
+        if(err) {return res.status(500).json({success: false, message: "Error getting user", user: req.headers.user})};
         if (user === null){
           return res.status(404).json({success: false, message:"No Such User"});
         } else {
