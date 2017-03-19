@@ -101,11 +101,9 @@ export const authorizedCall = function(http: Http, storage: Storage, type:httpTy
             //cast it to a promise
             httpCall.toPromise()
             .then((result) => { //if we get a good response from server:
-                console.log('PREAUTHERIZED result');
                 console.log(result);
                 resolve(result);
             }).catch((err) => { //if we do not get a good result from server
-                console.log('PREAUTHERIZED ERR')
                 console.log(err);
                 resolve(err);
             });
@@ -113,7 +111,7 @@ export const authorizedCall = function(http: Http, storage: Storage, type:httpTy
     }
     // Authorize and make a call
     let authorizeCall = function(){
-        return new Promise((resolve, reject) => {
+        return new Promise<{status, _body}>((resolve, reject) => {
             getToken(http, storage, {email: 'mendelh1537@gmail.com', password: 'password'}).then((res) => {
                 if(res.success){
                     resolve(preAuthorizedCall(res.token));
@@ -151,9 +149,11 @@ export const authorizedCall = function(http: Http, storage: Storage, type:httpTy
                 .then((res) => {
                     console.log('Got new Token');
                     console.log(res);
+                    resolve(res);
                 }).catch((err) => {
                     console.log('err came in');
                     console.log(err);
+                    reject(err);
                 })
             }
         });

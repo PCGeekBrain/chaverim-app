@@ -3,7 +3,7 @@ import { NavController, AlertController, Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { getToken } from '../../networking/auth';
-import { getCalls } from '../../networking/calls'
+import { getCalls, postCall } from '../../networking/calls'
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -23,17 +23,14 @@ export class HomePage {
       storage.get('canEdit').then((res) => {
         this.canEdit = res;
       });
-      // storage.get('logged_In').then((res) => {
-      //   this.loggedIn = res;
-      // });
+      storage.get('logged_in').then((res) => {
+        this.loggedIn = res;
+      });
     });
-    this.canEdit = true;
-    this.loggedIn = true;
     //Fill up the list
     this.items = [];
     getCalls(http, storage).then((res) => {
       this.items = this.clearTime(res.reverse());
-      console.log(this.items);
     })
   }
 
@@ -54,7 +51,7 @@ export class HomePage {
   }
 
   takecallPressed(item){
-    this.events.publish("item:taken", item);
+    //this.events.publish("item:taken", item);
     let index = this.items.indexOf(item);
     if(index >= 0){
       this.items.splice(index, 1);
@@ -81,15 +78,22 @@ export class HomePage {
       buttons: [
         { text: 'Cancel',handler: data => {}},
         { text: 'Save',handler: data => {
-            this.items.unshift({
-              title: data.title,
-              text: data.text,
-              name: data.name,
-              number: data.number,
-              location: data.location,
-              taken: false,
-              responder: {}
-            })
+            let body = {
+              title: data.title,  text: data.text,
+              name: data.name,  number: data.number,
+              location: data.location,  taken: false, responder: {}
+            }
+            postCall(this.http, this.storage, body)
+            .then((data) => {
+              if (data.success){
+                this.updateData();
+              } else {
+                this.alertCtrl.create({
+                  title: "Error",
+                  message: data.message
+                });
+              }
+            });
           }
         }
       ]
@@ -101,10 +105,9 @@ export class HomePage {
     for (let pos = 0; pos < list.length; pos++){
       if (list[pos].createdAt){
         let date = new Date(list[pos].createdAt)
-        list[pos].createdAt =  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        list[pos].createdAt = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
       }
-      return list;
     }
+    return list;
   }
-
 }

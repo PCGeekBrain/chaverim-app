@@ -26,3 +26,17 @@ export const getCalls = function(http: Http, storage: Storage){
         serverGet(resolve, reject);
     });
 }
+
+export const postCall = function(http: Http, storage: Storage, body){
+    return new Promise<{success: Boolean, message: string}>((resolve, reject) => {
+        authorizedCall(http, storage, httpTypes.POST, '/api/calls', body)
+        .then((res) => {
+            let data = JSON.parse(res._body)
+            resolve(data);
+        })
+        .catch(err => {
+            console.warn('Error in postCall')
+            console.warn(err);
+        })
+    })
+}
