@@ -44,7 +44,7 @@ export class HomePage {
   responderPressed(item){
     let responder = this.alertCtrl.create({
       title: item.responder.name,
-      subTitle: item.responder.phone,
+      subTitle: item.responder.number,
       buttons: ['OK']
     });
     responder.present();
@@ -52,10 +52,7 @@ export class HomePage {
 
   takecallPressed(item){
     //this.events.publish("item:taken", item);
-    let index = this.items.indexOf(item);
-    if(index >= 0){
-      this.items.splice(index, 1);
-    }
+    console.log(item._id);
   }
 
   updateData(){

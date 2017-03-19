@@ -38,45 +38,34 @@ CallRoutes.get('/count', function(req, res){
  * POST -> Allows user to take a call by passing its id in
  */
 CallRoutes.post('/', function(req, res){
-    //Validate that the user is not on a call
-    Call.count({finished: false, responderId: req.user._id}, function(err, count){
-        if (err){
-            console.log('validation error 1')
-            return res.status(500).json({success: false, err: err, message: "Error during validation check"})
-        } else if (count > 0){
-            console.log('already on call')
-            return res.status(400).json({success: false, count: count, message:"Alredy on call"})
-        } else {    // we have validated that the user can take a call. now lets do the actual work (query #2)
-            //Validate that the user is allowed to do this
-            if (['responder', 'dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0 && req.body.id){
-                Call.findOne({finished: false, _id: req.body.id}, {__v: 0}, function(err, call){
-                    if (err){
-                        return res.status(500).json({success: false, error: err, message: "Internal Server Error"})
-                    };
-                    if (call == null){
-                        return res.status(400).json({success: false, message:"Call does not exist"})
-                    } else {
-                        call.responder = {
-                            name: req.user.name,
-                            number: req.user.number,
-                        };
-                        call.responderId = req.user._id;
-                        call.taken = true;
-                        call.save(function(err, call, numAffected){
-                            if(err){
-                                return res.status(500).json({success: false, error: err, message: "Internal Server Error"});
-                            }
-                            return res.status(200).json({success: true, call: call});
-                        });
-                    }
-                });
-                //TODO send notificaiton to all users
+    //Validate that the user is allowed to do this
+    if (['responder', 'dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0 && req.body.id){
+        Call.findOne({finished: false, _id: req.body.id}, {__v: 0}, function(err, call){
+            if (err){
+                return res.status(500).json({success: false, error: err, message: "Internal Server Error"})
+            };
+            if (call == null){
+                return res.status(400).json({success: false, message:"Call does not exist"})
             } else {
-                console.log('no access')
-                return res.status(403).json({success: false, message: 'Invalid Account Permissions'});
+                call.responder = {
+                    name: req.user.name,
+                    number: req.user.number,
+                };
+                call.responderId = req.user._id;
+                call.taken = true;
+                call.save(function(err, call, numAffected){
+                    if(err){
+                        return res.status(500).json({success: false, error: err, message: "Internal Server Error"});
+                    }
+                    return res.status(200).json({success: true, call: call});
+                });
             }
-        }
-    });
+        });
+        //TODO send notificaiton to all users
+    } else {
+        console.log('no access')
+        return res.status(403).json({success: false, message: 'Invalid Account Permissions'});
+    }
 });
 
 /**
