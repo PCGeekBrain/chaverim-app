@@ -11,7 +11,6 @@ var authRoutes = express.Router();
 // Authenticate the user and get a JSON Web Token to include in the header of future requests.
 authRoutes.post('/authenticate', function (req, res) {
   //Find the user
-  console.log(req.body);
   User.findOne({ email: req.body.email }, function (err, user) { //When found
     if (err) morgan(err); //if there is an error burn the world why not?
 
@@ -51,60 +50,65 @@ authRoutes.get('/users', function(req, res){
   }
 });
 
+let updateField = function(user, field, value, admin, res){
+    if (field === 'name'){
+        user.name = req.body.value;
+        user.save(function (err) {
+            if (err) { return res.status(500).json({ success: false, message: 'Error updating name', error: err}); }
+            res.status(202).json({ success: true, message: 'Successfully updated name', user: user });
+        });
+    } else if (field === 'number'){
+        user.number = req.body.value;
+        user.save(function (err) {
+            if (err) { return res.status(500).json({ success: false, message: 'Error updating number', error: err}); }
+            res.status(202).json({ success: true, message: 'Successfully updated number', user: user });
+        });
+    } else if (field === 'password'){
+        user.password = req.body.value;
+        user.save(function (err) {
+            if (err) { return res.status(500).json({ success: false, message: 'Error updating password', error: err}); }
+            res.status(202).json({ success: true, message: 'Successfully updated password', user: user });
+        });
+    } else if (field === 'role' && admin){    //only admins can change roles
+        if (user.schema.path('role').enumValues.indexOf(req.body.value) >= 0){
+            user.role = req.body.value;
+            user.save(function (err) {
+                if (err) { return res.status(500).json({ success: false, message: 'Error updating role', error: err }); }
+                res.status(202).json({ success: true, message: 'Successfully updated role', user: user });
+            });
+        } else {
+            res.status(400).json({ success: false, message: 'Invalid role' });
+        }
+    }  else {
+        res.status(400).json({ success: false, message: 'Invalid Field' });
+    }
+}
+
 /** PUT updates user data (admin, moderator)
  * Needs user, field, value
  */
-authRoutes.put('/users', function (req, res) { 
-  if (req.user.role == "admin" || req.user.role == 'moderator') { //Only admins and mods past this point
-    if (req.body.field && req.body.value && req.body.user) {  //make sure we have what we need
-      User.findOne({ email: req.body.user }, { password: 0, __v: 0}, function (err, user) {  //find the user with that email address
-        if (err) throw err;
-        if (!user) {  // user does not exist
-          res.send(500, { success: false, message: 'User not found.' });
-        } else if(user.role == 'admin' && user._id != req.user._id){
-          res.status(403).json({success: false, message: "Invalid Account Permissions"})
-        } else {
-          let field = req.body.field;
-
-          if (field == 'name') {
-            user.name = req.body.value;
-            user.save(function (err) {
-              if (err) { return res.status(500).json({ success: false, message: 'Error updating name', error: err}); }
-              res.status(202).json({ success: true, message: 'Successfully updated name', user: user });
-            });
-          } else if (field == 'number') {
-            user.number = req.body.value;
-            user.save(function (err) {
-              if (err) { return res.status(500).json({ success: false, message: 'Error updating number', error: err}); }
-              res.status(202).json({ success: true, message: 'Successfully updated number', user: user });
-            });
-          } else if (field == 'password'){
-            user.password = req.body.value;
-            user.save(function (err) {
-              if (err) { return res.status(500).json({ success: false, message: 'Error updating password', error: err}); }
-              res.status(202).json({ success: true, message: 'Successfully updated password', user: user });
-            });
-          } else if (field == 'role'){
-            if (user.schema.path('role').enumValues.indexOf(req.body.value) >= 0){
-              user.role = req.body.value;
-              user.save(function (err) {
-                if (err) { return res.status(500).json({ success: false, message: 'Error updating role', error: err }); }
-                res.status(202).json({ success: true, message: 'Successfully updated role', user: user });
-              });
+authRoutes.put('/users', (req, res) => {
+    // If the request is from an admin editing a user
+    if(['admin', 'moderator'].indexOf(req.user.role) >= 0 && req.body.user){
+        User.findOne({email: req.body.user}, { password: 0, __v: 0}, (err, user) => {
+            if (err) {return res.status(500).json({success: false, message: "Internal Server Error"})}
+            else if (!user){
+                return res.status(500).json({success: false, message: "User Does Not Exist"})
+            } else if (user.role == 'admin' && user._id != req.user._id){
+                res.status(403).json({success: false, message: "You Cannot edit other admins"})
             } else {
-              res.status(400).json({ success: false, message: 'Invalid role' });
+                updateField(user, field, value, true, res);
             }
-          } else {
-            res.status(400).json({ success: false, message: 'Invalid Field' });
-          }
-        }
-      });
+        });
+        //otherwise if it is the user itself
+    } else if (req.body.field && req.body.value && (['name', 'number', 'password'].indexOf(req.body.field) != 0)){
+        User.findOne({_id: req.user._id}, { password: 0, __v: 0}, (err, user) => {
+            if (err) {return res.status(500).json({success: false, message: "Internal Server Error"})}
+            updateField(user, field, value, false, res);
+        });
     } else {
-      res.status(400).json({success: false, message: "Missing header info"});
+        res.status(400).json({ success: false, message: "Invalid Request"})
     }
-  } else {
-    res.status(403).json({ success: false, message: "Invalid Account Permissions" })
-  }
 });
 
 /** POST a new user. (Admin)

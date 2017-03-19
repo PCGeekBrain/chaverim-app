@@ -51,12 +51,12 @@ export const getToken = function(http: Http, storage: Storage, userInfo?){
             resolve(data);
         }).catch((err) => {
             setUserLoggedIn(storage, false);
-            reject({success: false, message: err});
+            resolve({success: false, message: "Connection Error"});
         });
     }
     //The meat of the function. update the tokens with a promise based on either storage or passed in values
-    return new Promise<{success: Boolean, message: String, 
-        token?:String, name?:String, number?:String, role?:String}>((resolve, reject) => {
+    return new Promise<{success: Boolean, message: string, 
+        token?:string, name?:string, number?:string, role?:string}>((resolve, reject) => {
         if(!userInfo){  //no user info was manually passed in
             getUserCredentials(storage).then((res) => {
                 callServer(http, storage, res, resolve, reject);
@@ -112,11 +112,11 @@ export const authorizedCall = function(http: Http, storage: Storage, type:httpTy
     // Authorize and make a call
     let authorizeCall = function(){
         return new Promise<{status, _body}>((resolve, reject) => {
-            getToken(http, storage, {email: 'mendelh1537@gmail.com', password: 'password'}).then((res) => {
+            getToken(http, storage).then((res) => {
                 if(res.success){
                     resolve(preAuthorizedCall(res.token));
                 } else {
-                    reject(res)
+                    reject(res);
                 }
             });
         });

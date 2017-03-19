@@ -28,6 +28,9 @@ export class AboutPage {
     this.events.subscribe("item:taken", (item) => {
       this.updateData();
     });
+    this.events.subscribe("user:auth", (value) => {
+      this.loggedIn = value;
+    });
   }
   /**
    * Updates the data in the lisst

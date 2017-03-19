@@ -30,6 +30,15 @@ export class HomePage {
     //Fill up the list
     this.items = [];
     this.updateData();
+
+    this.events.subscribe("user:auth", (value) => {
+      this.loggedIn = value;
+      storage.ready().then(() => {
+        storage.get('canEdit').then((res) => {
+          this.canEdit = res;
+        });
+      });
+    });
   }
 
   joinCall(item){

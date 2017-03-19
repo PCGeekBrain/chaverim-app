@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content>
-  <form (ngSubmit)="login()" class="LoginBox">
+  <form *ngIf="!loggedIn" (ngSubmit)="login()" class="LoginBox">
     <ion-item>
       <ion-label floating>Username</ion-label>
       <ion-input type="text" required [(ngModel)]="userInfo.email" ngControl="email" [ngModelOptions]="{standalone: true}"></ion-input>
@@ -20,4 +20,34 @@
     <br>
     <button ion-button type="submit" block>Sign In</button>
   </form>
+
+  <div *ngIf="loggedIn" class="loggedOut">
+    <div class="UserInfoBox">
+      <ion-icon name="person"></ion-icon>
+      <h1> {{userData.name}} </h1>
+      <h3> {{userData.number}} </h3>
+      <h3> {{userData.role}} </h3>
+    </div>
+    <form (ngSubmit)="editData()" class="EditBox">
+      <h1>Edit Account Information</h1>
+      <ion-item>
+        <ion-label>Field</ion-label>
+        <ion-select [(ngModel)]="editInfo.field" ngControl="field" [ngModelOptions]="{standalone: true}">
+          <ion-option value="name">Name</ion-option>
+          <ion-option value="number">Number</ion-option>
+          <ion-option value="password">Password</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label floating>Value</ion-label>
+        <ion-input type="text" required [(ngModel)]="editInfo.value" ngControl="value" [ngModelOptions]="{standalone: true}"></ion-input>
+      </ion-item>
+      <br>
+      <button ion-button type="submit" block>Update</button>
+    </form>
+    <div class="logoutbtn">
+      <button ion-button color="danger" (click)="logout()">Log Out</button>
+    </div>
+  </div>
+
 </ion-content>
