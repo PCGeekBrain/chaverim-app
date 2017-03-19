@@ -1,4 +1,4 @@
-import { Headers, Http } from '@angular/http'
+import { Http } from '@angular/http'
 import { getUserLoggedIn } from './userInfo'
 import { Storage } from '@ionic/storage';
 import { authorizedCall, httpTypes } from './authorized'
@@ -10,10 +10,8 @@ export const getCalls = function(http: Http, storage: Storage){
         authorizedCall(http, storage, httpTypes.GET, '/api/calls')
         .then(res => {
             if (res.status = 200){
-                console.log(res);
                 resolve(JSON.parse(res._body).calls)
             } else {
-                console.log(res);
                 resolve([]);
             }
         })

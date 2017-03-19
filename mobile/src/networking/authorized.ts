@@ -101,10 +101,11 @@ export const authorizedCall = function(http: Http, storage: Storage, type:httpTy
             //cast it to a promise
             httpCall.toPromise()
             .then((result) => { //if we get a good response from server:
-                console.log('result');
+                console.log('PREAUTHERIZED result');
                 console.log(result);
                 resolve(result);
             }).catch((err) => { //if we do not get a good result from server
+                console.log('PREAUTHERIZED ERR')
                 console.log(err);
                 resolve(err);
             });
@@ -115,7 +116,6 @@ export const authorizedCall = function(http: Http, storage: Storage, type:httpTy
         return new Promise((resolve, reject) => {
             getToken(http, storage, {email: 'mendelh1537@gmail.com', password: 'password'}).then((res) => {
                 if(res.success){
-                    console.log(res);
                     resolve(preAuthorizedCall(res.token));
                 } else {
                     reject(res)
@@ -132,9 +132,13 @@ export const authorizedCall = function(http: Http, storage: Storage, type:httpTy
                 storage.ready().then(() => {
                     storage.get('token').then((token) => {
                         preAuthorizedCall(token).then((res) => {
-                            resolve(res);
+                            if (res._body === 'Unauthorized'){  //I have no idea where this is being called. you are free to experiment
+                                resolve(authorizeCall())
+                            } else{
+                                resolve(res);
+                            }
                         }).catch((err) => {
-                            if (err._body === 'Unauthorized'){
+                            if (err._body === 'Unauthorized'){  //it might not be called here at all or only here. still do not know
                                 resolve(authorizeCall())
                             } else{
                                 reject(err);

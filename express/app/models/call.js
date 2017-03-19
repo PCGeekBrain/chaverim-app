@@ -9,7 +9,7 @@ var CallSchema = new Schema({
     finished: {type: Boolean, index: true, default: false},
     caller: {
         location: String,
-        name: String,
+        name: {type: String, default: ""},
         number: String,
     },
     responderId: String,

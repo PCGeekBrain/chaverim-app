@@ -32,7 +32,7 @@ export class HomePage {
     //Fill up the list
     this.items = [];
     getCalls(http, storage).then((res) => {
-      this.items = res;
+      this.items = this.clearTime(res.reverse());
       console.log(this.items);
     })
   }
@@ -63,7 +63,7 @@ export class HomePage {
 
   updateData(){
     getCalls(this.http, this.storage).then((res) => {
-      this.items = res;
+      this.items = this.clearTime(res.reverse());
     });
   }
 
@@ -95,6 +95,16 @@ export class HomePage {
       ]
     });
     prompt.present();
+  }
+
+  clearTime(list){
+    for (let pos = 0; pos < list.length; pos++){
+      if (list[pos].createdAt){
+        let date = new Date(list[pos].createdAt)
+        list[pos].createdAt =  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+      }
+      return list;
+    }
   }
 
 }
