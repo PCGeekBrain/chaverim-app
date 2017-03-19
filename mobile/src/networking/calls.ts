@@ -1,5 +1,4 @@
 import { Http } from '@angular/http'
-import { getUserLoggedIn } from './userInfo'
 import { Storage } from '@ionic/storage';
 import { authorizedCall, httpTypes } from './authorized'
 import 'rxjs/add/operator/toPromise';

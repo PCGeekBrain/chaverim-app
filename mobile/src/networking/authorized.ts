@@ -85,7 +85,6 @@ export const authorizedCall = function(http: Http, storage: Storage, type:httpTy
             headers.append('Content-Type', 'application/json');     //json so we don't have that angular bug
             headers.append('Authorization', token);     //pass the token
             //Create the call
-            console.log(body);
             if (type === httpTypes.POST) {
                 httpCall = http.post(url, body, {headers: headers});
             } else if (type === httpTypes.PUT) {

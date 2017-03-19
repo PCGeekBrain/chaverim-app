@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { NavController, AlertController, Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
-import { getToken } from '../../networking/auth';
 import { getCalls, postCall } from '../../networking/calls'
 import { TakeCall } from '../../networking/take'
 import 'rxjs/add/operator/map';
@@ -30,9 +29,7 @@ export class HomePage {
     });
     //Fill up the list
     this.items = [];
-    getCalls(http, storage).then((res) => {
-      this.items = this.clearTime(res.reverse());
-    })
+    this.updateData();
   }
 
   joinCall(item){
@@ -52,17 +49,17 @@ export class HomePage {
   }
 
   takecallPressed(item){
-    //this.events.publish("item:taken", item);
     TakeCall(this.http, this.storage, item).then((data) => {
       if (data.success){
         this.updateData();
+        this.events.publish("item:taken", item);
       } else {
         this.alertCtrl.create({
           title: "Error",
           message: data.message
         }).present();
       }
-    })
+    });
   }
 
   updateData(){

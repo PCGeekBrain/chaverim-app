@@ -7,11 +7,17 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-list-header>Follow us on Twitter</ion-list-header>
+  <form (ngSubmit)="login()" class="LoginBox">
     <ion-item>
-      <ion-icon name="ionic" item-left></ion-icon>
-      @ionicframework
+      <ion-label floating>Username</ion-label>
+      <ion-input type="text" required [(ngModel)]="userInfo.email" ngControl="email" [ngModelOptions]="{standalone: true}"></ion-input>
     </ion-item>
-  </ion-list>
+
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input type="password" required [(ngModel)]="userInfo.password" ngControl="password" [ngModelOptions]="{standalone: true}"></ion-input>
+    </ion-item>
+    <br>
+    <button ion-button type="submit" block>Sign In</button>
+  </form>
 </ion-content>

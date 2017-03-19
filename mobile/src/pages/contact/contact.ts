@@ -7,9 +7,13 @@ import { NavController } from 'ionic-angular';
   templateUrl: 'contact.html'
 })
 export class ContactPage {
+  userInfo: any;
 
   constructor(public navCtrl: NavController) {
-
+    this.userInfo = {email: null, password: null}
+  }
+  login() {
+    console.log(this.userInfo);
   }
 
 }

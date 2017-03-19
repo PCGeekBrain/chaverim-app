@@ -1,15 +1,49 @@
 <ion-header>
-  <ion-navbar>
+  <ion-toolbar>
     <ion-title>
       Current
     </ion-title>
-  </ion-navbar>
+    <ion-buttons end>
+      <button ion-button icon-only color="royal" (click)="updateData()">
+        <ion-icon name="refresh"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="icon">
+  <ion-list *ngIf="loggedIn">
+    <ion-list-header>
+      My Calls
+    </ion-list-header>
+    <ion-item-sliding *ngFor="let item of items">
+      <ion-item>
+        <ion-icon name="alert" *ngIf="!item.taken" item-left></ion-icon>
+        <ion-icon name="checkmark-circle-outline" *ngIf="item.taken" item-left></ion-icon>
+        <h2><b>{{item.title}}</b></h2>
+        <h3>{{item.caller.name}} | {{item.caller.number}}</h3>
+        <h3>{{item.createdAt}}</h3>
+        <h3><b>{{item.caller.location}}</b></h3>
+        <h3 style="white-space: normal;"><b>Details:</b> {{item.text}}</h3>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="secondary" (click)="dropCall(item)">
+          <ion-icon name="navigate"></ion-icon>
+          Drop
+        </button>
+        <button ion-button color="primary" (click)="finishCall(item)">
+          <ion-icon name="person"></ion-icon>
+          Finish
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+      <ion-list-header>
+        Backup For
+    </ion-list-header>
+  </ion-list>
+
+  <div *ngIf="!loggedIn" class="loggedOut">
     <ion-icon name="alert"></ion-icon>
-    <h1>{{title}}</h1>
-    <p>{{details}}</p>
+    <h1>Please log In</h1>
   </div>
 </ion-content>
