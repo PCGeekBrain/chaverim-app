@@ -37,6 +37,6 @@ export const postCall = function(http: Http, storage: Storage, body){
         .catch(err => {
             console.warn('Error in postCall')
             console.warn(err);
-        })
-    })
+        });
+    });
 }

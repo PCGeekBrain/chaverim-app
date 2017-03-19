@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { getToken } from '../../networking/auth';
 import { getCalls, postCall } from '../../networking/calls'
+import { TakeCall } from '../../networking/take'
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -52,7 +53,16 @@ export class HomePage {
 
   takecallPressed(item){
     //this.events.publish("item:taken", item);
-    console.log(item._id);
+    TakeCall(this.http, this.storage, item).then((data) => {
+      if (data.success){
+        this.updateData();
+      } else {
+        this.alertCtrl.create({
+          title: "Error",
+          message: data.message
+        }).present();
+      }
+    })
   }
 
   updateData(){
@@ -88,7 +98,7 @@ export class HomePage {
                 this.alertCtrl.create({
                   title: "Error",
                   message: data.message
-                });
+                }).present();
               }
             });
           }

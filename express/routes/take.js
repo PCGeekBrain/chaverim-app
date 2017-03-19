@@ -39,31 +39,37 @@ CallRoutes.get('/count', function(req, res){
  */
 CallRoutes.post('/', function(req, res){
     //Validate that the user is allowed to do this
-    if (['responder', 'dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0 && req.body.id){
-        Call.findOne({finished: false, _id: req.body.id}, {__v: 0}, function(err, call){
-            if (err){
-                return res.status(500).json({success: false, error: err, message: "Internal Server Error"})
-            };
-            if (call == null){
-                return res.status(400).json({success: false, message:"Call does not exist"})
-            } else {
-                call.responder = {
-                    name: req.user.name,
-                    number: req.user.number,
+    if (['responder', 'dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
+        if(req.body.id){
+            Call.findOne({finished: false, _id: req.body.id}, {__v: 0}, function(err, call){
+                if (err){
+                    return res.status(500).json({success: false, error: err, message: "Internal Server Error"})
                 };
-                call.responderId = req.user._id;
-                call.taken = true;
-                call.save(function(err, call, numAffected){
-                    if(err){
-                        return res.status(500).json({success: false, error: err, message: "Internal Server Error"});
-                    }
-                    return res.status(200).json({success: true, call: call});
-                });
-            }
-        });
-        //TODO send notificaiton to all users
+                if (call == null){
+                    return res.status(400).json({success: false, message:"Call does not exist"})
+                } else if (call.responderId != "") {
+                    return res.status(400).json({success: false, message:"Call Already Taken"})
+                } else {
+                    call.responder = {
+                        name: req.user.name,
+                        number: req.user.number,
+                    };
+                    call.responderId = req.user._id;
+                    call.taken = true;
+                    call.save(function(err, call, numAffected){
+                        if(err){
+                            return res.status(500).json({success: false, error: err, message: "Internal Server Error"});
+                        }
+                        return res.status(200).json({success: true, call: call});
+                    });
+                }
+            });
+            //TODO send notificaiton to all users
+        } else {
+            console.log(req.body);
+            return res.status(400).json({success: false, message: 'No ID given'});
+        }
     } else {
-        console.log('no access')
         return res.status(403).json({success: false, message: 'Invalid Account Permissions'});
     }
 });
@@ -75,6 +81,8 @@ CallRoutes.put('/', function(req, res){
     Call.findOne({_id: req.body.id}, function(err, call){
         if (err) {
             return res.status(500).json({success: false, message: "Internal Server Error"});
+        } else if (call == null) {
+            return res.status(400).json({success: false, message: "Call Does Not Exist"})
         } else if (call.responderId == req.user._id || ['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
             if (call.finished){
                 return res.status(400).json({success: false, message: "Call already compleated"});
@@ -100,6 +108,9 @@ CallRoutes.delete('/', function(req, res){
     if (['responder', 'dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0 && req.headers.id){
         Call.findOne({_id: req.headers.id}, function(err, call){
             if (err) {res.status(500).json({success: false, error: err, message: "Internal Server Error"})};
+            if (call === null){
+                return res.status(400).json({success: false, message: "Call does not exist"});
+            }
             if (call.responderId == req.user._id || ['dispatcher', 'moderator', 'admin'].indexOf(req.user.role) >= 0){
                 call.responder = {};
                 call.responderId = "";
