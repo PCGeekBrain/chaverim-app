@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, ViewController, NavParams } from 'ionic-angular';
+import { ViewController, NavParams } from 'ionic-angular';
 
 @Component({
     selector: 'addcall',

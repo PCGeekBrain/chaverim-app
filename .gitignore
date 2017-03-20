@@ -32,6 +32,3 @@ mobile/$RECYCLE.BIN/
 mobile/.DS_Store
 mobile/Thumbs.db
 mobile/UserInterfaceState.xcuserstate
-
-express/node_modules
-express/config/main.js
