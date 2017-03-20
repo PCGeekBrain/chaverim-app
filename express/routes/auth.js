@@ -21,7 +21,7 @@ authRoutes.post('/authenticate', function (req, res) {
       user.comparePassword(req.body.password, function (err, isMatch) {
         if (isMatch && !err) {
           // Create token if the password matched and no error was thrown
-          var token = jwt.sign({id: user._id.toString()}, config.secret, {
+          var token = jwt.sign({ id: user._id.toString() }, config.secret, {
             expiresIn: '1h',
           });
           //Yey! we have a token for some time. here it is along will all your information becuase if a hacker gets this far he deserves it too no? (Chill its for debugging)
@@ -39,76 +39,78 @@ authRoutes.post('/authenticate', function (req, res) {
 authRoutes.use('/users', passport.authenticate('jwt', { session: false }));
 
 /** GET all the users (admin, moderator)*/
-authRoutes.get('/users', function(req, res){
-  if (req.user.role == "admin" || req.user.role == 'moderator'){
-    User.find({}, { password: 0, __v: 0}, function(err, users){
+authRoutes.get('/users', function (req, res) {
+  if (req.user.role == "admin" || req.user.role == 'moderator') {
+    User.find({}, { password: 0, __v: 0 }, function (err, users) {
       if (err) throw err;
-      res.status(200).json({success: true, message: "Successfull listing of users", users: users})
+      res.status(200).json({ success: true, message: "Successfull listing of users", users: users })
     })
   } else {
-    res.status(403).json({success: false, message: "Invalid Account Permissions"})
+    res.status(403).json({ success: false, message: "Invalid Account Permissions" })
   }
 });
 
-let updateField = function(user, field, value, admin, res){
-    if (field === 'name'){
-        user.name = req.body.value;
-        user.save(function (err) {
-            if (err) { return res.status(500).json({ success: false, message: 'Error updating name', error: err}); }
-            res.status(202).json({ success: true, message: 'Successfully updated name', user: user });
-        });
-    } else if (field === 'number'){
-        user.number = req.body.value;
-        user.save(function (err) {
-            if (err) { return res.status(500).json({ success: false, message: 'Error updating number', error: err}); }
-            res.status(202).json({ success: true, message: 'Successfully updated number', user: user });
-        });
-    } else if (field === 'password'){
-        user.password = req.body.value;
-        user.save(function (err) {
-            if (err) { return res.status(500).json({ success: false, message: 'Error updating password', error: err}); }
-            res.status(202).json({ success: true, message: 'Successfully updated password', user: user });
-        });
-    } else if (field === 'role' && admin){    //only admins can change roles
-        if (user.schema.path('role').enumValues.indexOf(req.body.value) >= 0){
-            user.role = req.body.value;
-            user.save(function (err) {
-                if (err) { return res.status(500).json({ success: false, message: 'Error updating role', error: err }); }
-                res.status(202).json({ success: true, message: 'Successfully updated role', user: user });
-            });
-        } else {
-            res.status(400).json({ success: false, message: 'Invalid role' });
-        }
-    }  else {
-        res.status(400).json({ success: false, message: 'Invalid Field' });
+let updateField = function (user, field, value, admin, res) {
+  if (field === 'name') {
+    user.name = value;
+    user.save(function (err) {
+      if (err) { return res.status(500).json({ success: false, message: 'Error updating name', error: err }); }
+      res.status(202).json({ success: true, message: 'Successfully updated name', user: user });
+    });
+  } else if (field === 'number') {
+    user.number = value;
+    user.save(function (err) {
+      if (err) { return res.status(500).json({ success: false, message: 'Error updating number', error: err }); }
+      res.status(202).json({ success: true, message: 'Successfully updated number', user: user });
+    });
+  } else if (field === 'password') {
+    user.password = value;
+    user.save(function (err) {
+      if (err) { return res.status(500).json({ success: false, message: 'Error updating password', error: err }); }
+      res.status(202).json({ success: true, message: 'Successfully updated password', user: user });
+    });
+  } else if (field === 'role' && admin) {    //only admins can change roles
+    if (user.schema.path('role').enumValues.indexOf(value) >= 0) {
+      user.role = value;
+      user.save(function (err) {
+        if (err) { return res.status(500).json({ success: false, message: 'Error updating role', error: err }); }
+        res.status(202).json({ success: true, message: 'Successfully updated role', user: user });
+      });
+    } else {
+      res.status(400).json({ success: false, message: 'Invalid role' });
     }
+  } else {
+    res.status(400).json({ success: false, message: 'Invalid Field' });
+  }
 }
 
 /** PUT updates user data (admin, moderator)
  * Needs user, field, value
  */
 authRoutes.put('/users', (req, res) => {
-    // If the request is from an admin editing a user
-    if(['admin', 'moderator'].indexOf(req.user.role) >= 0 && req.body.user){
-        User.findOne({email: req.body.user}, { password: 0, __v: 0}, (err, user) => {
-            if (err) {return res.status(500).json({success: false, message: "Internal Server Error"})}
-            else if (!user){
-                return res.status(500).json({success: false, message: "User Does Not Exist"})
-            } else if (user.role == 'admin' && user._id != req.user._id){
-                res.status(403).json({success: false, message: "You Cannot edit other admins"})
-            } else {
-                updateField(user, field, value, true, res);
-            }
-        });
-        //otherwise if it is the user itself
-    } else if (req.body.field && req.body.value && (['name', 'number', 'password'].indexOf(req.body.field) != 0)){
-        User.findOne({_id: req.user._id}, { password: 0, __v: 0}, (err, user) => {
-            if (err) {return res.status(500).json({success: false, message: "Internal Server Error"})}
-            updateField(user, field, value, false, res);
-        });
-    } else {
-        res.status(400).json({ success: false, message: "Invalid Request"})
-    }
+  // If the request is from an admin editing a user
+  if (['admin', 'moderator'].indexOf(req.user.role) >= 0 && req.body.user) {
+    User.findOne({ email: req.body.user }, { password: 0, __v: 0 }, (err, user) => {
+      if (err) { return res.status(500).json({ success: false, message: "Internal Server Error" }) }
+      else if (!user) {
+        return res.status(500).json({ success: false, message: "User Does Not Exist" })
+      } else if (user.role == 'admin' && user._id != req.user._id) {
+        res.status(403).json({ success: false, message: "You Cannot edit other admins" })
+      } else {
+        console.log(req.body.field);
+        updateField(user, req.body.field, req.body.value, true, res);
+      }
+    });
+    //otherwise if it is the user itself
+  } else if (req.body.value && (['name', 'number', 'password'].indexOf(req.body.field) >= 0)) {
+    User.findOne({ _id: req.user._id }, { password: 0, __v: 0 }, (err, user) => {
+      if (err) { return res.status(500).json({ success: false, message: "Internal Server Error" }) }
+      updateField(user, req.body.field, req.body.value, false, res);
+    });
+  } else {
+    console.log(req.body.field);
+    res.status(400).json({ success: false, message: "Invalid Request" })
+  }
 });
 
 /** POST a new user. (Admin)
@@ -130,7 +132,7 @@ authRoutes.post('/users', function (req, res) {
         if (err) {
           return res.status(409).json({ success: false, message: 'That email address already exists.' });
         }
-        res.status(201).json({success: true, message: 'Successfully created a new user.'});
+        res.status(201).json({ success: true, message: 'Successfully created a new user.' });
       });
     };
   } else {
@@ -141,18 +143,18 @@ authRoutes.post('/users', function (req, res) {
 /** Delete an exisiting user (Admin)
  * Needs user
 */
-authRoutes.delete('/users', function(req, res){
-  if (req.user.role == 'admin'){
-    if (req.headers.user){
-      User.findOneAndRemove({email: req.headers.user}, { password: 0, __v: 0}, function(err, user){
-        if(err) {return res.status(500).json({success: false, message: "Error getting user", user: req.headers.user})};
-        if (user === null){
-          return res.status(404).json({success: false, message:"No Such User"});
+authRoutes.delete('/users', function (req, res) {
+  if (req.user.role == 'admin') {
+    if (req.headers.user) {
+      User.findOneAndRemove({ email: req.headers.user }, { password: 0, __v: 0 }, function (err, user) {
+        if (err) { return res.status(500).json({ success: false, message: "Error getting user", user: req.headers.user }) };
+        if (user === null) {
+          return res.status(404).json({ success: false, message: "No Such User" });
         } else {
-          res.status(200).json({success: true, message:"Successfully deleted user", user: user});
+          res.status(200).json({ success: true, message: "Successfully deleted user", user: user });
         }
       });
-    } else{
+    } else {
       res.status(400).json({ success: false, message: 'No User Given' });
     }
   } else {

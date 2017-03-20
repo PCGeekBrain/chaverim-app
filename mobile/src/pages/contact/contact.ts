@@ -3,6 +3,7 @@ import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { NavController, AlertController, Events } from 'ionic-angular';
 import { getToken } from '../../networking/authorized'
+import { getUserInfo, updateUserInfo } from '../../networking/editUser'
 
 @Component({
   selector: 'page-contact',
@@ -68,8 +69,24 @@ export class ContactPage {
       this.storage.set('password', null);
     });
   }
+
   editData(){
     console.log(this.editInfo);
+    updateUserInfo(this.http, this.storage, this.editInfo).then((res) => {
+      if(res.success){
+        this.refreshUserData();
+        if (this.editInfo.field === 'password'){
+          this.storage.ready().then(() => {
+            this.storage.set('password', this.editInfo.value);
+          })
+        }
+      } else {
+        this.alertCtrl.create({
+          title: "Error",
+          message: res.message
+        }).present();
+      }
+    });
   }
 
   getUserData() {
@@ -83,6 +100,19 @@ export class ContactPage {
       this.storage.get('role').then((value) => {
         this.userData.role = value;
       });
+    });
+  }
+
+  refreshUserData(){
+    getUserInfo(this.http, this.storage).then((res) => {
+      this.storage.ready().then(() => {
+        this.storage.set('name', res.name);
+        this.storage.set('number', res.number);
+        this.storage.set('role', res.role);
+      });
+      this.userData.name = res.name;
+      this.userData.number = res.number;
+      this.userData.role = res.role;
     });
   }
 }

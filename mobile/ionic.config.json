@@ -6,11 +6,11 @@
   "proxies": [
     {
       "path": "/api",
-      "proxyUrl": "http://localhost:3000/api"
+      "proxyUrl": "http://192.168.1.11:3000/api"
     },
     {
       "path": "/auth",
-      "proxyUrl": "http://localhost:3000/auth"
+      "proxyUrl": "http://192.168.1.11:3000/auth"
     }
   ]
 }
