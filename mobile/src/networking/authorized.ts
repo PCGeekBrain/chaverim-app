@@ -35,12 +35,12 @@ export const getToken = function(http: Http, storage: Storage, userInfo?){
                     storage.set('number', data.number);
                     storage.set('role', data.role);
                     //Permissions UI things
-                    if (['responder', 'dispatcher', 'moderator', 'admin'].indexOf(data.role) !== -1){
+                    if (['dispatcher', 'moderator', 'admin'].indexOf(data.role) !== -1){
                         storage.set('canEdit', true);
                         data.canEdit = true;
                     } else {
                         storage.set('canEdit', false);
-                        data.canEdit = true;
+                        data.canEdit = false;
                     }
                 });
                 setUserLoggedIn(storage, true);
@@ -56,7 +56,7 @@ export const getToken = function(http: Http, storage: Storage, userInfo?){
     }
     //The meat of the function. update the tokens with a promise based on either storage or passed in values
     return new Promise<{success: Boolean, message: string, 
-        token?:string, name?:string, number?:string, role?:string}>((resolve, reject) => {
+        token?:string, name?:string, number?:string, role?:string, canEdit?:boolean}>((resolve, reject) => {
         if(!userInfo){  //no user info was manually passed in
             getUserCredentials(storage).then((res) => {
                 callServer(http, storage, res, resolve, reject);

@@ -34,6 +34,7 @@ export class ContactPage {
     getToken(this.http, this.storage, this.userInfo).then(result => {
       if(result.success){
         this.events.publish("user:auth", true);
+        this.events.publish("user:edit", result.canEdit);
         this.loggedIn = true;
         this.storage.ready().then(() => {
           this.storage.set('email', this.userInfo.email);

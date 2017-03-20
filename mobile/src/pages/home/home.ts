@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, Events } from 'ionic-angular';
+import { NavController, AlertController, Events, ModalController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
+import { AddCall } from '../addcall/addcall';
 import { getCalls, postCall } from '../../networking/calls'
 import { TakeCall } from '../../networking/take'
 import 'rxjs/add/operator/map';
@@ -17,7 +18,7 @@ export class HomePage {
 
   constructor(public events: Events, public http: Http,
               public navCtrl: NavController, public storage: Storage,
-              public alertCtrl: AlertController) {
+              public alertCtrl: AlertController, public modalCtrl: ModalController) {
     // Get all the items from storage
     storage.ready().then(() => {
       storage.get('canEdit').then((res) => {
@@ -33,12 +34,10 @@ export class HomePage {
 
     this.events.subscribe("user:auth", (value) => {
       this.loggedIn = value;
-      storage.ready().then(() => {
-        storage.get('canEdit').then((res) => {
-          this.canEdit = res;
-        });
-      });
     });
+    this.events.subscribe("user:edit", value => {
+      this.canEdit = value;
+    })
   }
 
   joinCall(item){
@@ -78,40 +77,29 @@ export class HomePage {
   }
 
   addItem(){
-    let prompt = this.alertCtrl.create({
-      title: 'Add Call',
-      message: "Enter the details for the call you want to add",
-      inputs: [
-        { name: 'title',  placeholder: 'Title'},
-        { name: 'text',  placeholder: 'Details'},
-        { name: 'name',  placeholder: 'Name'},
-        { name: 'number',  placeholder: 'Number'},
-        { name: 'location',  placeholder: 'Location'},
-      ],
-      buttons: [
-        { text: 'Cancel',handler: data => {}},
-        { text: 'Save',handler: data => {
-            let body = {
-              title: data.title,  text: data.text,
-              name: data.name,  number: data.number,
-              location: data.location,  taken: false, responder: {}
-            }
-            postCall(this.http, this.storage, body)
-            .then((data) => {
-              if (data.success){
-                this.updateData();
-              } else {
-                this.alertCtrl.create({
-                  title: "Error",
-                  message: data.message
-                }).present();
-              }
-            });
-          }
+    var modal = this.modalCtrl.create(AddCall);
+    modal.onDidDismiss((data) => {
+      if(data.submit){
+        console.log(data);   
+        let body = {
+          title: data.title,  text: data.text,
+          name: data.name,  number: data.number,
+          location: data.location,  taken: false, responder: {}
         }
-      ]
+        postCall(this.http, this.storage, body)
+        .then((data) => {
+          if (data.success){
+            this.updateData();
+          } else {
+            this.alertCtrl.create({
+              title: "Error",
+              message: data.message
+            }).present();
+          }
+        });
+      }
     });
-    prompt.present();
+    modal.present();
   }
 
   clearTime(list){
