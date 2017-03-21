@@ -70,9 +70,15 @@ export class HomePage {
     });
   }
 
-  updateData(){
+  updateData(refresher?){
     getCalls(this.http, this.storage).then((res) => {
-      this.items = this.clearTime(res.reverse());
+      this.items = this.clearTime(res);
+      this.items.sort(function(a, b){
+        return b.createdAt - a.createdAt;
+      })
+      if(refresher){
+        refresher.complete();
+      }
     });
   }
 
@@ -106,7 +112,14 @@ export class HomePage {
     for (let pos = 0; pos < list.length; pos++){
       if (list[pos].createdAt){
         let date = new Date(list[pos].createdAt)
-        list[pos].createdAt = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        list[pos].createdAt = date;
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let ampm = hours > 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        let finalminutes = minutes < 10 ? '0'+minutes : minutes;
+        list[pos].timeStamp = hours + ":" + finalminutes + " " + ampm;
       }
     }
     return list;
