@@ -1,8 +1,10 @@
 import { Http } from '@angular/http'
 import { Storage } from '@ionic/storage';
-import { authorizedCall, httpTypes } from './authorized'
+import { authorizedCall, httpTypes } from './authorized';
+import { URL } from './constants';
 import 'rxjs/add/operator/toPromise';
 
+const url = URL + '/api/calls/take'
 
 /**
  * Call this to get a list of all calls you took
@@ -11,16 +13,16 @@ import 'rxjs/add/operator/toPromise';
  */
 export const GetTakenCalls = function(http: Http, storage: Storage){
     return new Promise<Array<{}>>((resolve, reject) => {
-        authorizedCall(http, storage, httpTypes.GET, '/api/calls/take')
+        authorizedCall(http, storage, httpTypes.GET, url)
         .then(res => {
             if (res.status = 200){
-                resolve(JSON.parse(res._body).calls)
+                resolve(JSON.parse(res._body).calls);
             } else {
                 resolve([]);
             }
         })
         .catch(err => {
-            console.log('err:')
+            console.log('err:');
             console.log(err);
             resolve([]);
         });
@@ -36,7 +38,7 @@ export const GetTakenCalls = function(http: Http, storage: Storage){
 export const TakeCall = function(http: Http, storage: Storage, call){
     console.log(call._id);
     return new Promise<{success: Boolean, message: string}>((resolve, reject) => {
-        authorizedCall(http, storage, httpTypes.POST, '/api/calls/take', {id: call._id})
+        authorizedCall(http, storage, httpTypes.POST, url, {id: call._id})
         .then((res) => {
             let data = JSON.parse(res._body);
             resolve(data);
@@ -56,7 +58,7 @@ export const TakeCall = function(http: Http, storage: Storage, call){
  */
 export const DropCall = function(http: Http, storage: Storage, call){
     return new Promise<{success: Boolean, message: string}>((resolve, reject) => {
-        authorizedCall(http, storage, httpTypes.DELETE, '/api/calls/take', {id: call._id})
+        authorizedCall(http, storage, httpTypes.DELETE, url, {id: call._id})
         .then((res) => {
             let data = JSON.parse(res._body)
             resolve(data);
@@ -76,13 +78,13 @@ export const DropCall = function(http: Http, storage: Storage, call){
  */
 export const FinishCall = function(http: Http, storage: Storage, call){
     return new Promise<{success: Boolean, message: string}>((resolve, reject) => {
-        authorizedCall(http, storage, httpTypes.PUT, '/api/calls/take', {id: call._id})
+        authorizedCall(http, storage, httpTypes.PUT, url, {id: call._id})
         .then((res) => {
-            let data = JSON.parse(res._body)
+            let data = JSON.parse(res._body);
             resolve(data);
         })
         .catch(err => {
-            console.warn('Error in FinishCall')
+            console.warn('Error in FinishCall');
             console.warn(err);
         });
     });

@@ -1,5 +1,6 @@
 import { Headers, Http } from '@angular/http'
 import { getUserCredentials, setUserLoggedIn, getUserLoggedIn } from './userInfo';
+import { URL } from './constants';
 import { Storage } from '@ionic/storage';
 import 'rxjs/add/operator/toPromise';
 
@@ -23,7 +24,7 @@ export const getToken = function(http: Http, storage: Storage, userInfo?){
         headers.append('Content-Type', 'application/json');
         console.log({msg: "Getting user token", userInfo});
         //Post the server for some authentication info
-        http.post('/auth/authenticate', {email: userInfo.email, password: userInfo.password}, {headers: headers})
+        http.post(URL + '/auth/authenticate', {email: userInfo.email, password: userInfo.password}, {headers: headers})
         .toPromise().then((res) => {
             let data = JSON.parse(res._body);
             if (data.success){
@@ -76,6 +77,7 @@ export const getToken = function(http: Http, storage: Storage, userInfo?){
  * @param body the body to send to the server
  */
 export const authorizedCall = function(http: Http, storage: Storage, type:httpTypes, url, body?){
+    console.log(url);
     //Call once we have a token
     let preAuthorizedCall = function(token){
         console.log('running call on token: ' + token)
