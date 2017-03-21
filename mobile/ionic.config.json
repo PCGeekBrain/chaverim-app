@@ -6,11 +6,11 @@
   "proxies": [
     {
       "path": "/api",
-      "proxyUrl": "http://192.168.1.14:3000/api"
+      "proxyUrl": "https://www.chaverimch.com/api"
     },
     {
       "path": "/auth",
-      "proxyUrl": "http://192.168.1.14:3000/auth"
+      "proxyUrl": "https://www.chaverimch.com/auth"
     }
   ]
 }
