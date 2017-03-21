@@ -3,8 +3,9 @@ import { NavController, AlertController, Events, ModalController } from 'ionic-a
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { AddCall } from '../addcall/addcall';
-import { getCalls, postCall } from '../../networking/calls'
+import { getCalls, postCall, dropCall } from '../../networking/calls'
 import { TakeCall } from '../../networking/take'
+import { BackupCall } from '../../networking/backup'
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -41,19 +42,25 @@ export class HomePage {
   }
 
   joinCall(item){
-    //Working import
-    //getToken(this.http, this.storage).then((res) => {
-    //  alert('res =>' + res);
-    //});
+    BackupCall(this.http, this.storage, item).then(res => {
+      this.showResult(res);
+    });
   }
 
-  responderPressed(item){
-    let responder = this.alertCtrl.create({
-      title: item.responder.name,
-      subTitle: item.responder.number,
-      buttons: ['OK']
-    });
-    responder.present();
+  responderPressed(item, type){
+    if (type === 'responder'){
+      this.alertCtrl.create({
+        title: item.responder.name,
+        subTitle: item.responder.number,
+        buttons: ['OK']
+      }).present();
+    } else if (type === 'backup'){
+      this.alertCtrl.create({
+        title: item.backup.name,
+        subTitle: item.backup.number,
+        buttons: ['OK']
+      }).present();
+    }
   }
 
   takecallPressed(item){
@@ -80,6 +87,23 @@ export class HomePage {
         refresher.complete();
       }
     });
+  }
+
+  cancelCall(item){
+    dropCall(this.http, this.storage, item).then((res) => {
+      this.showResult(res);
+    })
+  }
+
+  showResult(data){
+      if(data.success){
+        this.updateData();
+      } else {
+        this.alertCtrl.create({
+        title: "Error",
+        message: data.message
+      }).present();
+    }
   }
 
   addItem(){
