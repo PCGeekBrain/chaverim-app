@@ -40,3 +40,17 @@ export const postCall = function(http: Http, storage: Storage, body){
         });
     });
 }
+
+export const dropCall = function(http: Http, storage: Storage, call){
+    return new Promise<{success: Boolean, message: string}>((resolve, reject) => {
+        authorizedCall(http, storage, httpTypes.POST, URL + '/api/calls/cancel', {id: call._id})
+        .then(res => {
+            let data = JSON.parse(res._body);
+            resolve(data);
+        })
+        .catch(err => {
+            console.warn('Error in postCall')
+            console.warn(err);
+        });
+    });
+}

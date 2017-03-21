@@ -3,8 +3,9 @@ import { NavController, AlertController, Events, ModalController } from 'ionic-a
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { AddCall } from '../addcall/addcall';
-import { getCalls, postCall } from '../../networking/calls'
+import { getCalls, postCall, dropCall } from '../../networking/calls'
 import { TakeCall } from '../../networking/take'
+import { BackupCall } from '../../networking/backup'
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -41,19 +42,25 @@ export class HomePage {
   }
 
   joinCall(item){
-    //Working import
-    //getToken(this.http, this.storage).then((res) => {
-    //  alert('res =>' + res);
-    //});
+    BackupCall(this.http, this.storage, item).then(res => {
+      this.showResult(res);
+    });
   }
 
-  responderPressed(item){
-    let responder = this.alertCtrl.create({
-      title: item.responder.name,
-      subTitle: item.responder.number,
-      buttons: ['OK']
-    });
-    responder.present();
+  responderPressed(item, type){
+    if (type === 'responder'){
+      this.alertCtrl.create({
+        title: item.responder.name,
+        subTitle: item.responder.number,
+        buttons: ['OK']
+      }).present();
+    } else if (type === 'backup'){
+      this.alertCtrl.create({
+        title: item.backup.name,
+        subTitle: item.backup.number,
+        buttons: ['OK']
+      }).present();
+    }
   }
 
   takecallPressed(item){
@@ -70,10 +77,33 @@ export class HomePage {
     });
   }
 
-  updateData(){
+  updateData(refresher?){
     getCalls(this.http, this.storage).then((res) => {
-      this.items = this.clearTime(res.reverse());
+      this.items = this.clearTime(res);
+      this.items.sort(function(a, b){
+        return b.createdAt - a.createdAt;
+      })
+      if(refresher){
+        refresher.complete();
+      }
     });
+  }
+
+  cancelCall(item){
+    dropCall(this.http, this.storage, item).then((res) => {
+      this.showResult(res);
+    })
+  }
+
+  showResult(data){
+      if(data.success){
+        this.updateData();
+      } else {
+        this.alertCtrl.create({
+        title: "Error",
+        message: data.message
+      }).present();
+    }
   }
 
   addItem(){
@@ -106,7 +136,14 @@ export class HomePage {
     for (let pos = 0; pos < list.length; pos++){
       if (list[pos].createdAt){
         let date = new Date(list[pos].createdAt)
-        list[pos].createdAt = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        list[pos].createdAt = date;
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let ampm = hours > 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        let finalminutes = minutes < 10 ? '0'+minutes : minutes;
+        list[pos].timeStamp = hours + ":" + finalminutes + " " + ampm;
       }
     }
     return list;
