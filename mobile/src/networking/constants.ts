@@ -1,2 +1,2 @@
-// export const URL = "https://www.chaverimch.com"
-export const URL = ""
+export const URL = "https://www.chaverimch.com"
+// export const URL = ""
