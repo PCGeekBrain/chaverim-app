@@ -38,7 +38,7 @@ export class HomePage {
     });
     this.events.subscribe("user:edit", value => {
       this.canEdit = value;
-    })
+    });
   }
 
   joinCall(item){

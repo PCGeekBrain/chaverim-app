@@ -24,7 +24,7 @@
         <ion-icon name="hammer" item-left></ion-icon>
         <h2><b>{{item.title}}</b></h2>
         <h3>{{item.caller.name}} | {{item.caller.number}}</h3>
-        <h3>{{item.createdAt}}</h3>
+        <h3>{{item.timeStamp}}</h3>
         <h3><b>{{item.caller.location}}</b></h3>
         <h3 style="white-space: normal;"><b>Details:</b> {{item.details}}</h3>
       </ion-item>
@@ -47,7 +47,7 @@
         <ion-icon name="flag" item-left></ion-icon>
         <h2><b>{{call.title}}</b></h2>
         <h3>{{call.caller.name}} | {{call.caller.number}}</h3>
-        <h3>{{call.createdAt}}</h3>
+        <h3>{{call.timeStamp}}</h3>
         <h3><b>{{call.caller.location}}</b></h3>
         <h3 style="white-space: normal;"><b>Details:</b> {{call.details}}</h3>
       </ion-item>
