@@ -5,6 +5,7 @@ import { DropBackupCall, GetBackupCalls, FinishBackupCall } from '../../networki
 import { DomSanitizer } from '@angular/platform-browser';
 import { Http } from '@angular/http';
 import { Storage } from '@ionic/storage';
+import { Push } from '@ionic/cloud-angular';
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -16,7 +17,7 @@ export class AboutPage {
   backupcalls: any[];
   loggedIn: Boolean;
 
-  constructor(public http: Http, public events: Events,
+  constructor(public http: Http, public events: Events, private push: Push,
     public navCtrl: NavController, public storage: Storage,
     public alertCtrl: AlertController, private sanitizer: DomSanitizer) {
       //Get items from storage
@@ -33,6 +34,11 @@ export class AboutPage {
     });
     this.events.subscribe("user:auth", (value) => {
       this.loggedIn = value;
+    });
+
+    this.push.rx.notification()
+    .subscribe((msg) => {
+      this.updateData();
     });
   }
   /**

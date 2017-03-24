@@ -6,7 +6,7 @@ import { AddCall } from '../addcall/addcall';
 import { getCalls, postCall, dropCall } from '../../networking/calls'
 import { TakeCall } from '../../networking/take'
 import { BackupCall } from '../../networking/backup'
-import { Push, PushToken } from '@ionic/cloud-angular';
+import { Push } from '@ionic/cloud-angular';
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -43,7 +43,7 @@ export class HomePage {
 
     this.push.rx.notification()
     .subscribe((msg) => {
-      alert(msg.title + ': ' + msg.text);
+      this.updateData();
     });
   }
 
