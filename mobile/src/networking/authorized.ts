@@ -2,6 +2,7 @@ import { Headers, Http } from '@angular/http'
 import { getUserCredentials, setUserLoggedIn, getUserLoggedIn } from './userInfo';
 import { URL } from './constants';
 import { Storage } from '@ionic/storage';
+import { Push, PushToken } from '@ionic/cloud-angular';
 import 'rxjs/add/operator/toPromise';
 
 export enum httpTypes {

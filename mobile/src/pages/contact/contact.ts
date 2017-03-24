@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { NavController, AlertController, Events } from 'ionic-angular';
-import { getToken } from '../../networking/authorized'
-import { getUserInfo, updateUserInfo } from '../../networking/editUser'
+import { Push, PushToken } from '@ionic/cloud-angular';
+import { getToken } from '../../networking/authorized';
+import { RevokeToken, SendToken } from '../../networking/pushToken';
+import { getUserInfo, updateUserInfo } from '../../networking/editUser';
 
 @Component({
   selector: 'page-contact',
@@ -15,7 +17,7 @@ export class ContactPage {
   userData: any;
   editInfo: any;
 
-  constructor(public events: Events, public http: Http,
+  constructor(public events: Events, public http: Http, public push: Push,
               public navCtrl: NavController, public storage: Storage,
               public alertCtrl: AlertController) {
     this.userInfo = {email: null, password: null}
@@ -45,16 +47,18 @@ export class ContactPage {
           title: "Success!",
           message: "Login sucessfull"
         }).present();
+        //Send token to server
+        this.sendToken();
       } else {
         this.alertCtrl.create({
           title: "Error",
           message: result.message
         }).present();
       }
-    }).catch(err => {
+    }).catch(err => { //NEO has left the matrix and broken our app :-(
       this.alertCtrl.create({
-          title: "Matrix Error 404",
-          message: "Matrix not found. Please make sure the matrix is plugged in."
+          title: "Matrix not found",
+          message: "Neo, Please make sure the matrix is plugged in."
       }).present();
     });
   }
@@ -68,6 +72,37 @@ export class ContactPage {
       this.storage.set('role', null);
       this.storage.set('email', null);
       this.storage.set('password', null);
+    });
+    this.revokeToken();
+  }
+
+  sendToken = function(){
+    this.push.register().then((t: PushToken) => {
+      return this.push.saveToken(t);
+    }).then((t: PushToken) => {
+      console.log('Token Saved => ', t.token);
+      SendToken(this.http, this.storage, t).then((res) => {
+        if(res.success === false){
+            this.alertCtrl.create({
+            title: "Error",
+            message: res.message
+          }).present();
+        }
+      });
+    })
+  }
+
+  revokeToken = function(){
+    this.push.unregister().then((t: PushToken) => {
+      console.log('Revokeing Token => ', t);
+      RevokeToken(this.http, this.storage, t).then((res) => {
+          if(res.success === false){
+            this.alertCtrl.create({
+            title: "Error",
+            message: res.message
+          }).present();
+        }
+      });
     });
   }
 

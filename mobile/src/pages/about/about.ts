@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, AlertController, Events } from 'ionic-angular';
 import { GetTakenCalls, DropCall, FinishCall } from '../../networking/take'
 import { DropBackupCall, GetBackupCalls, FinishBackupCall } from '../../networking/backup'
+import { DomSanitizer } from '@angular/platform-browser';
 import { Http } from '@angular/http';
 import { Storage } from '@ionic/storage';
 import 'rxjs/add/operator/map';
@@ -17,7 +18,7 @@ export class AboutPage {
 
   constructor(public http: Http, public events: Events,
     public navCtrl: NavController, public storage: Storage,
-    public alertCtrl: AlertController) {
+    public alertCtrl: AlertController, private sanitizer: DomSanitizer) {
       //Get items from storage
     storage.ready().then(() => {
       storage.get('logged_in').then((res) => {
@@ -85,6 +86,13 @@ export class AboutPage {
       }
   }
 
+  showBackups(call){
+    this.alertCtrl.create({
+        title: "Backups",
+        message: call.backup.join("\n")
+      }).present();
+  }
+
 /**
  * Formats the list for display
  * @param list pass it the list that the server sends us
@@ -104,5 +112,12 @@ export class AboutPage {
       }
     }
     return list;
+  }
+
+  sanitize(url:string){
+    return this.sanitizer.bypassSecurityTrustUrl(url);
+  }
+  replaceSpace(url:string, replacewith:string){
+    return url.replace(" ", replacewith);
   }
 }
