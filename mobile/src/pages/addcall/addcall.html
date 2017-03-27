@@ -15,8 +15,20 @@
 <ion-content>
     <form (ngSubmit)="createCall(newCall)" class="CallBox">
         <ion-item>
-             <ion-label floating>Title</ion-label>
-            <ion-input type="text" [(ngModel)]="newCall.title" ngControl="title" [ngModelOptions]="{standalone: true}"></ion-input>
+            <ion-label>Title</ion-label>
+            <ion-select [(ngModel)]="newCall.title" ngControl="title" [ngModelOptions]="{standalone: true}">
+                <ion-option value="Boost">Boost</ion-option>
+                <ion-option value="Lockout of a Car">Lockout - Car</ion-option>
+                <ion-option value="Lockout of a Car -- Child Involved">Lockout - Car - Child</ion-option>
+                <ion-option value="Lockout of a House">Lockout of a House</ion-option>
+                <ion-option value="Lockout of a House -- Child Involved">Lockout - House - Child</ion-option>
+                <ion-option value="Lockout of a House -- Fire on Stove">Lockout - House - Fire</ion-option>
+                <ion-option value="Flat Tire">Flat Tire</ion-option>
+                <ion-option value="Tire Low on Air">Tire Low on Air</ion-option>
+                <ion-option value="Car out of Gas">Car out of Gas</ion-option>
+                <ion-option value="Steering Wheel Lock">Steering Wheel Lock</ion-option>
+                
+            </ion-select>
         </ion-item>
         <ion-item>
             <ion-label floating>Details</ion-label>

@@ -6,6 +6,7 @@ import { AddCall } from '../addcall/addcall';
 import { getCalls, postCall, dropCall } from '../../networking/calls'
 import { TakeCall } from '../../networking/take'
 import { BackupCall } from '../../networking/backup'
+import { Push } from '@ionic/cloud-angular';
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -17,7 +18,7 @@ export class HomePage {
   canEdit: Boolean;
   loggedIn: Boolean;
 
-  constructor(public events: Events, public http: Http,
+  constructor(public events: Events, public http: Http, public push: Push,
               public navCtrl: NavController, public storage: Storage,
               public alertCtrl: AlertController, public modalCtrl: ModalController) {
     // Get all the items from storage
@@ -32,12 +33,18 @@ export class HomePage {
     //Fill up the list
     this.items = [];
     this.updateData();
+    console.log(this.items);
 
     this.events.subscribe("user:auth", (value) => {
       this.loggedIn = value;
     });
     this.events.subscribe("user:edit", value => {
       this.canEdit = value;
+    });
+
+    this.push.rx.notification()
+    .subscribe((msg) => {
+      this.updateData();
     });
   }
 

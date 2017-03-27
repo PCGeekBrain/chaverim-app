@@ -16,7 +16,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-list *ngIf="loggedIn">
-    <ion-list-header>
+    <ion-list-header *ngIf="items.length">
       My Calls
     </ion-list-header>
     <ion-item-sliding *ngFor="let item of items">
@@ -37,9 +37,27 @@
           <ion-icon name="checkmark"></ion-icon>
           Finish
         </button>
+        <button ion-button color="primary" (click)="showBackups(item)">
+          <ion-icon name="people"></ion-icon>
+          Backups
+        </button>
+      </ion-item-options>
+      <ion-item-options side="left">
+        <a ion-button color="primary" [href]="sanitize('geo:40.665845,-73.942532?q=' + replaceSpace(item.caller.location, '+'))">
+          <ion-icon name="navigate"></ion-icon>
+          GoTo
+        </a>
+        <a ion-button color="secondary" href="tel:{{item.caller.number}}">
+          <ion-icon name="call"></ion-icon>
+          Call<br>Back
+        </a>
+        <a ion-button color="primary" [href]="sanitize('sms:' + replaceSpace(item.caller.number, ''))">
+          <ion-icon name="text"></ion-icon>
+          SMS
+        </a>
       </ion-item-options>
     </ion-item-sliding>
-    <ion-list-header>
+    <ion-list-header *ngIf="backupcalls.length">
         Backup For
     </ion-list-header>
     <ion-item-sliding *ngFor="let call of backupcalls">
@@ -60,6 +78,24 @@
           <ion-icon name="checkmark"></ion-icon>
           Finish
         </button>
+        <button ion-button color="primary" (click)="showBackups(call)">
+          <ion-icon name="people"></ion-icon>
+          Backups
+        </button>
+      </ion-item-options>
+      <ion-item-options side="left">
+        <a ion-button color="primary" [href]="sanitize('geo:40.665845,-73.942532?q=' + replaceSpace(call.caller.location, '+'))">
+          <ion-icon name="navigate"></ion-icon>
+          GoTo
+        </a>
+        <a ion-button color="secondary" href="tel:{{call.caller.number}}">
+          <ion-icon name="call"></ion-icon>
+          Call<br>Back
+        </a>
+        <a ion-button color="primary" [href]="sanitize('sms:' + replaceSpace(call.caller.number, ''))">
+          <ion-icon name="text"></ion-icon>
+          SMS
+        </a>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
