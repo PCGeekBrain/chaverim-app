@@ -16,7 +16,7 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-list *ngIf="loggedIn">
-    <ion-list-header>
+    <ion-list-header *ngIf="items.length">
       My Calls
     </ion-list-header>
     <ion-item-sliding *ngFor="let item of items">
@@ -57,7 +57,7 @@
         </a>
       </ion-item-options>
     </ion-item-sliding>
-    <ion-list-header>
+    <ion-list-header *ngIf="backupcalls.length">
         Backup For
     </ion-list-header>
     <ion-item-sliding *ngFor="let call of backupcalls">

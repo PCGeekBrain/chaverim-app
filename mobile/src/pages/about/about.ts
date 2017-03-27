@@ -20,6 +20,8 @@ export class AboutPage {
   constructor(public http: Http, public events: Events, private push: Push,
     public navCtrl: NavController, public storage: Storage,
     public alertCtrl: AlertController, private sanitizer: DomSanitizer) {
+    this.items = [];
+    this.backupcalls = [];
       //Get items from storage
     storage.ready().then(() => {
       storage.get('logged_in').then((res) => {
@@ -124,6 +126,10 @@ export class AboutPage {
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
   replaceSpace(url:string, replacewith:string){
-    return url.replace(" ", replacewith);
+    if(url){
+        return url.replace(" ", replacewith);
+    } else {
+      return url;
+    }
   }
 }

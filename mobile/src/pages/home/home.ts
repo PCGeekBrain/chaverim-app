@@ -33,6 +33,7 @@ export class HomePage {
     //Fill up the list
     this.items = [];
     this.updateData();
+    console.log(this.items);
 
     this.events.subscribe("user:auth", (value) => {
       this.loggedIn = value;

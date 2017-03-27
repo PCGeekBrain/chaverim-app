@@ -72,8 +72,8 @@ export class ContactPage {
       this.storage.set('role', null);
       this.storage.set('email', null);
       this.storage.set('password', null);
+      this.revokeToken();
     });
-    this.revokeToken();
   }
 
   sendToken = function(){
@@ -98,9 +98,14 @@ export class ContactPage {
       RevokeToken(this.http, this.storage, t).then((res) => {
           if(res.success === false){
             this.alertCtrl.create({
-            title: "Error",
+            title: "Token Invalidation Error",
             message: res.message
           }).present();
+        } else {
+          this.alertCtrl.create({
+            title: "Success",
+            message: "Successfull logout"
+          })
         }
       });
     });
