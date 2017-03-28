@@ -28,7 +28,7 @@ export class LogsPage {
     this.items = [];
   }
 
-  updateData(refresher){
+  updateData(refresher?){
     console.log("Updating Data");
     getCallLogs(this.http, this.storage).then((res) => {
       this.items = this.clearTime(res);
@@ -45,7 +45,7 @@ export class LogsPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad LogsPage');
+    this.updateData();
   }
 
   clearTime(list){

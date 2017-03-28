@@ -132,4 +132,8 @@ export class AboutPage {
       return url;
     }
   }
+
+  ionViewDidLoad() {
+    this.updateData();
+  }
 }

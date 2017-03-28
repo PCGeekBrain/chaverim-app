@@ -163,4 +163,8 @@ export class HomePage {
     }
     return list;
   }
+
+  ionViewDidLoad() {
+    this.updateData();
+  }
 }
