@@ -66,13 +66,13 @@ export class ContactPage {
     console.log("Logging Out");
     this.events.publish("user:auth", false);
     this.loggedIn = false;
+    this.revokeToken();
     this.storage.ready().then(() => {
       this.storage.set('token', null);
       this.storage.set('number', null);
       this.storage.set('role', null);
       this.storage.set('email', null);
       this.storage.set('password', null);
-      this.revokeToken();
     });
   }
 
