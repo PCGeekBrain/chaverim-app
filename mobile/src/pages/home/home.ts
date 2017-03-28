@@ -41,11 +41,6 @@ export class HomePage {
     this.events.subscribe("user:edit", value => {
       this.canEdit = value;
     });
-
-    this.push.rx.notification()
-    .subscribe((msg) => {
-      this.updateData();
-    });
   }
 
   joinCall(item){

@@ -37,11 +37,6 @@ export class AboutPage {
     this.events.subscribe("user:auth", (value) => {
       this.loggedIn = value;
     });
-
-    this.push.rx.notification()
-    .subscribe((msg) => {
-      this.updateData();
-    });
   }
   /**
    * Updates the data in the lisst
