@@ -68,7 +68,6 @@ export class ContactPage {
     this.loggedIn = false;
     this.revokeToken();
     this.storage.ready().then(() => {
-      this.storage.set('token', null);
       this.storage.set('number', null);
       this.storage.set('role', null);
       this.storage.set('email', null);
