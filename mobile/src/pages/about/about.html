@@ -104,4 +104,9 @@
     <ion-icon name="alert"></ion-icon>
     <h1>Please log In</h1>
   </div>
+
+  <div *ngIf="!items.length && !backupcalls.length" class="loggedOut">
+    <ion-icon name="help-buoy"></ion-icon>
+    <h1>I find your lack of help disturbing.</h1>
+  </div>
 </ion-content>
