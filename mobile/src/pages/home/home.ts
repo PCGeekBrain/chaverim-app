@@ -102,6 +102,14 @@ export class HomePage {
     })
   }
 
+  editCall(call){
+    let modal = this.modalCtrl.create(AddCall, {call: call});
+    modal.onDidDismiss(data => {
+      console.log(data);
+    });
+    modal.present();
+  }
+
   showResult(data){
       if(data.success){
         this.updateData();
@@ -120,8 +128,8 @@ export class HomePage {
         console.log(data);   
         let body = {
           title: data.title,  details: data.details,
-          name: data.name,  number: data.number,
-          location: data.location,  taken: false, responder: {}
+          name: data.caller.name,  number: data.caller.number,
+          location: data.caller.location,  taken: false, responder: {}
         }
         postCall(this.http, this.storage, body)
         .then((data) => {

@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Create New Call
+      {{ title }}
     </ion-title>
     <ion-buttons end>
       <button ion-button icon-only color="royal" (click)="dismiss()">
@@ -18,16 +18,17 @@
             <ion-label>Title</ion-label>
             <ion-select [(ngModel)]="newCall.title" ngControl="title" [ngModelOptions]="{standalone: true}">
                 <ion-option value="Boost">Boost</ion-option>
-                <ion-option value="Lockout of a Car">Lockout - Car</ion-option>
-                <ion-option value="Lockout of a Car -- Child Involved">Lockout - Car - Child</ion-option>
+                <ion-option value="Lockout of car">Lockout of car</ion-option>
                 <ion-option value="Lockout of a House">Lockout of a House</ion-option>
-                <ion-option value="Lockout of a House -- Child Involved">Lockout - House - Child</ion-option>
-                <ion-option value="Lockout of a House -- Fire on Stove">Lockout - House - Fire</ion-option>
-                <ion-option value="Flat Tire">Flat Tire</ion-option>
-                <ion-option value="Tire Low on Air">Tire Low on Air</ion-option>
+                <ion-option value="Flat tire - Change tire">Flat tire - Change tire</ion-option>
+                <ion-option value="Flat tire - Needs air">Flat tire - Needs air</ion-option>
                 <ion-option value="Car out of Gas">Car out of Gas</ion-option>
-                <ion-option value="Steering Wheel Lock">Steering Wheel Lock</ion-option>
-                
+                <ion-option value="Car stuck on snow/ice">Car stuck on snow/ice</ion-option>
+                <ion-option value="Cut a bike lock">Cut a bike lock</ion-option>
+                <ion-option value="CHILD LOCKED IN CAR">CHILD LOCKED IN CAR</ion-option>
+                <ion-option value="CHILD LOCKED IN HOUSE">CHILD LOCKED IN HOUSE</ion-option>
+                <ion-option value="Chesed Call">Chesed Call</ion-option>
+                <ion-option value="Other">Other</ion-option>
             </ion-select>
         </ion-item>
         <ion-item>
@@ -36,18 +37,18 @@
         </ion-item>
         <ion-item>
             <ion-label floating>Name</ion-label>
-            <ion-input type="text" [(ngModel)]="newCall.name" ngControl="name" [ngModelOptions]="{standalone: true}"></ion-input>
+            <ion-input type="text" [(ngModel)]="newCall.caller.name" ngControl="caller.name" [ngModelOptions]="{standalone: true}"></ion-input>
         </ion-item>
         <ion-item>
             <ion-label floating>Number</ion-label>
-            <ion-input type="text" [(ngModel)]="newCall.number" ngControl="number" [ngModelOptions]="{standalone: true}"></ion-input>
+            <ion-input type="text" [(ngModel)]="newCall.caller.number" ngControl="caller.number" [ngModelOptions]="{standalone: true}"></ion-input>
         </ion-item>
         <ion-item>
             <ion-label floating>Location</ion-label>
-            <ion-input type="text" [(ngModel)]="newCall.location" ngControl="location" [ngModelOptions]="{standalone: true}"></ion-input>
+            <ion-input type="text" [(ngModel)]="newCall.caller.location" ngControl="caller.location" [ngModelOptions]="{standalone: true}"></ion-input>
         </ion-item>
         <br>
 
-        <button ion-button type="submit" block>Create</button>
+        <button ion-button type="submit" block>{{buttonText}}</button>
     </form>
 </ion-content>

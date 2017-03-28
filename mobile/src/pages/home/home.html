@@ -31,6 +31,10 @@
             <ion-icon name="archive"></ion-icon>
             Cancel
           </button>
+          <button ion-button color="primary" *ngIf="canEdit" (click)="editCall(item)">
+            <ion-icon name="cog"></ion-icon>
+            Edit
+          </button>
         </ion-item-options>
         <ion-item-options side="right">
           <button ion-button color="primary" *ngIf="item.taken" (click)="responderPressed(item, 'responder')">
