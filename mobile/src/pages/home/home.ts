@@ -3,7 +3,7 @@ import { NavController, AlertController, Events, ModalController } from 'ionic-a
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { AddCall } from '../addcall/addcall';
-import { getCalls, postCall, dropCall } from '../../networking/calls'
+import { getCalls, postCall, dropCall, editCall } from '../../networking/calls'
 import { TakeCall } from '../../networking/take'
 import { BackupCall } from '../../networking/backup'
 import { Push } from '@ionic/cloud-angular';
@@ -102,10 +102,10 @@ export class HomePage {
     })
   }
 
-  editCall(call){
+  editACall(call){
     let modal = this.modalCtrl.create(AddCall, {call: call});
     modal.onDidDismiss(data => {
-      console.log(data);
+      editCall(this.http, this.storage, data);
     });
     modal.present();
   }

@@ -41,6 +41,20 @@ export const postCall = function(http: Http, storage: Storage, body){
     });
 }
 
+export const editCall = function(http: Http, storage: Storage, call){
+    return new Promise<{success: Boolean, message: String}>((resolve, reject) => {
+        authorizedCall(http, storage, httpTypes.PUT, URL + '/api/calls', {id: call._id, call: call})
+        .then(res => {
+            let data = JSON.parse(res._body);
+            resolve(data)
+        })
+        .catch(err => {
+            console.warn('Error in EditCall');
+            console.warn(err);
+        });
+    })
+}
+
 export const dropCall = function(http: Http, storage: Storage, call){
     return new Promise<{success: Boolean, message: string}>((resolve, reject) => {
         authorizedCall(http, storage, httpTypes.POST, URL + '/api/calls/cancel', {id: call._id})
