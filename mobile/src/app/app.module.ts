@@ -5,6 +5,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { MyApp } from './app.component';
 import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
+import { LogsPage } from '../pages/logs/logs'
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 import { AddCall } from '../pages/addcall/addcall';
@@ -34,6 +35,7 @@ const cloudSettings: CloudSettings = {
     MyApp,
     AboutPage,
     ContactPage,
+    LogsPage,
     HomePage,
     TabsPage,
     AddCall,
@@ -52,6 +54,7 @@ const cloudSettings: CloudSettings = {
     ContactPage,
     HomePage,
     TabsPage,
+    LogsPage,
     AddCall
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]

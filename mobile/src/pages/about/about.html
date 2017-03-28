@@ -12,101 +12,105 @@
 </ion-header>
 
 <ion-content>
-  <ion-refresher (ionRefresh)="updateData($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
-  <ion-list *ngIf="loggedIn">
-    <ion-list-header *ngIf="items.length">
-      My Calls
-    </ion-list-header>
-    <ion-item-sliding *ngFor="let item of items">
-      <ion-item>
-        <ion-icon name="hammer" item-left></ion-icon>
-        <h2><b>{{item.title}}</b></h2>
-        <h3>{{item.caller.name}} | {{item.caller.number}}</h3>
-        <h3>{{item.timeStamp}}</h3>
-        <h3><b>{{item.caller.location}}</b></h3>
-        <h3 style="white-space: normal;"><b>Details:</b> {{item.details}}</h3>
-      </ion-item>
-      <ion-item-options side="right">
-        <button ion-button color="danger" (click)="dropCall(item)">
-          <ion-icon name="close"></ion-icon>
-          Drop
-        </button>
-        <button ion-button color="secondary" (click)="finishCall(item)">
-          <ion-icon name="checkmark"></ion-icon>
-          Finish
-        </button>
-        <button ion-button color="primary" (click)="showBackups(item)">
-          <ion-icon name="people"></ion-icon>
-          Backups
-        </button>
-      </ion-item-options>
-      <ion-item-options side="left">
-        <a ion-button color="primary" [href]="sanitize('geo:40.665845,-73.942532?q=' + replaceSpace(item.caller.location, '+'))">
-          <ion-icon name="navigate"></ion-icon>
-          GoTo
-        </a>
-        <a ion-button color="secondary" href="tel:{{item.caller.number}}">
-          <ion-icon name="call"></ion-icon>
-          Call<br>Back
-        </a>
-        <a ion-button color="primary" [href]="sanitize('sms:' + replaceSpace(item.caller.number, ''))">
-          <ion-icon name="text"></ion-icon>
-          SMS
-        </a>
-      </ion-item-options>
-    </ion-item-sliding>
-    <ion-list-header *ngIf="backupcalls.length">
-        Backup For
-    </ion-list-header>
-    <ion-item-sliding *ngFor="let call of backupcalls">
-      <ion-item>
-        <ion-icon name="flag" item-left></ion-icon>
-        <h2><b>{{call.title}}</b></h2>
-        <h3>{{call.caller.name}} | {{call.caller.number}}</h3>
-        <h3>{{call.timeStamp}}</h3>
-        <h3><b>{{call.caller.location}}</b></h3>
-        <h3 style="white-space: normal;"><b>Details:</b> {{call.details}}</h3>
-      </ion-item>
-      <ion-item-options side="right">
-        <button ion-button color="danger" (click)="dropBackupCall(call)">
-          <ion-icon name="close"></ion-icon>
-          Drop
-        </button>
-        <button ion-button color="secondary" (click)="finishBackupCall(call)">
-          <ion-icon name="checkmark"></ion-icon>
-          Finish
-        </button>
-        <button ion-button color="primary" (click)="showBackups(call)">
-          <ion-icon name="people"></ion-icon>
-          Backups
-        </button>
-      </ion-item-options>
-      <ion-item-options side="left">
-        <a ion-button color="primary" [href]="sanitize('geo:40.665845,-73.942532?q=' + replaceSpace(call.caller.location, '+'))">
-          <ion-icon name="navigate"></ion-icon>
-          GoTo
-        </a>
-        <a ion-button color="secondary" href="tel:{{call.caller.number}}">
-          <ion-icon name="call"></ion-icon>
-          Call<br>Back
-        </a>
-        <a ion-button color="primary" [href]="sanitize('sms:' + replaceSpace(call.caller.number, ''))">
-          <ion-icon name="text"></ion-icon>
-          SMS
-        </a>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+  <div ng-if="loggedIn">
+    <ion-refresher (ionRefresh)="updateData($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <ion-list>
+      <ion-list-header *ngIf="items.length">
+        My Calls
+      </ion-list-header>
+      <ion-item-sliding *ngFor="let item of items">
+        <ion-item>
+          <ion-icon name="hammer" item-left></ion-icon>
+          <h2><b>{{item.title}}</b></h2>
+          <h3>{{item.caller.name}} | {{item.caller.number}}</h3>
+          <h3>{{item.timeStamp}}</h3>
+          <h3><b>{{item.caller.location}}</b></h3>
+          <h3 style="white-space: normal;"><b>Details:</b> {{item.details}}</h3>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button color="danger" (click)="dropCall(item)">
+            <ion-icon name="close"></ion-icon>
+            Drop
+          </button>
+          <button ion-button color="secondary" (click)="finishCall(item)">
+            <ion-icon name="checkmark"></ion-icon>
+            Finish
+          </button>
+          <button ion-button color="primary" (click)="showBackups(item)">
+            <ion-icon name="people"></ion-icon>
+            Backups
+          </button>
+        </ion-item-options>
+        <ion-item-options side="left">
+          <a ion-button color="primary" [href]="sanitize('geo:40.665845,-73.942532?q=' + replaceSpace(item.caller.location, '+'))">
+            <ion-icon name="navigate"></ion-icon>
+            GoTo
+          </a>
+          <a ion-button color="secondary" href="tel:{{item.caller.number}}">
+            <ion-icon name="call"></ion-icon>
+            Call<br>Back
+          </a>
+          <a ion-button color="primary" [href]="sanitize('sms:' + replaceSpace(item.caller.number, ''))">
+            <ion-icon name="text"></ion-icon>
+            SMS
+          </a>
+        </ion-item-options>
+      </ion-item-sliding>
+      <ion-list-header *ngIf="backupcalls.length">
+          Backup For
+      </ion-list-header>
+      <ion-item-sliding *ngFor="let call of backupcalls">
+        <ion-item>
+          <ion-icon name="flag" item-left></ion-icon>
+          <h2><b>{{call.title}}</b></h2>
+          <h3>{{call.caller.name}} | {{call.caller.number}}</h3>
+          <h3>{{call.timeStamp}}</h3>
+          <h3><b>{{call.caller.location}}</b></h3>
+          <h3 style="white-space: normal;"><b>Details:</b> {{call.details}}</h3>
+        </ion-item>
+        <ion-item-options side="right">
+          <button ion-button color="danger" (click)="dropBackupCall(call)">
+            <ion-icon name="close"></ion-icon>
+            Drop
+          </button>
+          <button ion-button color="secondary" (click)="finishBackupCall(call)">
+            <ion-icon name="checkmark"></ion-icon>
+            Finish
+          </button>
+          <button ion-button color="primary" (click)="showBackups(call)">
+            <ion-icon name="people"></ion-icon>
+            Backups
+          </button>
+        </ion-item-options>
+        <ion-item-options side="left">
+          <a ion-button color="primary" [href]="sanitize('geo:40.665845,-73.942532?q=' + replaceSpace(call.caller.location, '+'))">
+            <ion-icon name="navigate"></ion-icon>
+            GoTo
+          </a>
+          <a ion-button color="secondary" href="tel:{{call.caller.number}}">
+            <ion-icon name="call"></ion-icon>
+            Call<br>Back
+          </a>
+          <a ion-button color="primary" [href]="sanitize('sms:' + replaceSpace(call.caller.number, ''))">
+            <ion-icon name="text"></ion-icon>
+            SMS
+          </a>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+
+    <div *ngIf="!items.length && !backupcalls.length" class="loggedOut">
+      <ion-icon name="help-buoy"></ion-icon>
+      <h1>I find your lack of help disturbing.</h1>
+    </div>
+  </div>
 
   <div *ngIf="!loggedIn" class="loggedOut">
     <ion-icon name="alert"></ion-icon>
     <h1>Please log In</h1>
   </div>
 
-  <div *ngIf="!items.length && !backupcalls.length" class="loggedOut">
-    <ion-icon name="help-buoy"></ion-icon>
-    <h1>I find your lack of help disturbing.</h1>
-  </div>
 </ion-content>

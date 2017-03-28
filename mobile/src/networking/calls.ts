@@ -68,3 +68,21 @@ export const dropCall = function(http: Http, storage: Storage, call){
         });
     });
 }
+
+export const getCallLogs = function(http: Http, storage: Storage){
+    return new Promise<Array<{}>>((resolve, reject) => {
+        authorizedCall(http, storage, httpTypes.GET, URL + '/api/calls/log')
+        .then(res => {
+            if (res.status = 200){
+                resolve(JSON.parse(res._body).calls)
+            } else {
+                resolve([]);
+            }
+        })
+        .catch(err => {
+            console.log('err:')
+            console.log(err);
+            resolve([]);
+        });
+    });
+}
