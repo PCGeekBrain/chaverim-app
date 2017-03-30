@@ -28,6 +28,7 @@ mobile/plugins/android.json
 mobile/plugins/ios.json
 mobile/www/
 mobile/$RECYCLE.BIN/
+mobile/version1.0/
 
 mobile/.DS_Store
 mobile/Thumbs.db
