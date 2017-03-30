@@ -162,4 +162,8 @@ export class HomePage {
   ionViewDidLoad() {
     this.updateData();
   }
+
+  testClick(){
+    alert("Fuck you!")
+  }
 }

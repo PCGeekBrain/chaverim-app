@@ -59,7 +59,7 @@ export class LogsPage {
         hours = hours % 12;
         hours = hours ? hours : 12; // the hour '0' should be '12'
         let finalminutes = minutes < 10 ? '0'+minutes : minutes;
-        let display_date = date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear()
+        let display_date = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()
         list[pos].timeStamp = display_date + " " + hours + ":" + finalminutes + " " + ampm;
       }
     }

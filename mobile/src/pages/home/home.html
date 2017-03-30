@@ -10,9 +10,15 @@
 </ion-header>
 
 <ion-content>
+  <ion-toolbar class="call_dispatch">
+    <a href="tel:7182221800">
+        <ion-title>Call Dispatch</ion-title>
+    </a>
+  </ion-toolbar>
   <ion-refresher (ionRefresh)="updateData($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+
   <!--Toolbar with "Call Dispatch that links to tel:7182221800-->
   <div *ngIf="loggedIn">
     <ion-list *ngIf="items.length">
@@ -70,3 +76,7 @@
   </div>
 
 </ion-content>
+
+<ion-footer>
+  
+</ion-footer>
