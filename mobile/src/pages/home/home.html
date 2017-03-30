@@ -13,6 +13,7 @@
   <ion-refresher (ionRefresh)="updateData($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+  <!--Toolbar with "Call Dispatch that links to tel:7182221800-->
   <div *ngIf="loggedIn">
     <ion-list *ngIf="items.length">
       <ion-item-sliding *ngFor="let item of items">

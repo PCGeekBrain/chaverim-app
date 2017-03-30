@@ -22,8 +22,10 @@
         <h3><b>Caller: {{item.caller.name}} - {{item.caller.number}}</b></h3>
         <h3><b>Location: {{item.caller.location}}</b></h3>
         <h3><i>Dispatcher: </i>{{item.dispatcher.name}} at {{item.timeStamp}}</h3>
-        <h3><b>Dropped: {{item.canceled}}</b></h3>
+        <h3><i>Responder: </i>{{ item.responder.name }}</h3>
+        <h3 *ngIf="item.canceled">Cancelled by {{item.canceled_by.name}}</h3>
         <h3 style="white-space: normal;"><i>Details:</i> {{item.details}}</h3>
+        <h3 style="white-space: normal;"><i>Backups:</i> {{item.backup}}</h3>
       </ion-item>
     </ion-list>
 
