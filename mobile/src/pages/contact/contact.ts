@@ -67,45 +67,51 @@ export class ContactPage {
     this.events.publish("user:auth", false);
     this.loggedIn = false;
     this.revokeToken();
-    this.storage.ready().then(() => {
-      this.storage.set('number', null);
-      this.storage.set('role', null);
-      this.storage.set('email', null);
-      this.storage.set('password', null);
-    });
   }
 
   sendToken = function(){
     this.push.register().then((t: PushToken) => {
       return this.push.saveToken(t);
     }).then((t: PushToken) => {
-      console.log('Token Saved => ', t.token);
-      SendToken(this.http, this.storage, t).then((res) => {
+      this.storage.ready().then(() => {
+        this.storage.set('pushToken', t.token);
+      });
+      console.log('Token Saved => ', t.token); //log the token that was saved
+      SendToken(this.http, this.storage, t).then((res) => { //send it to server
         if(res.success === false){
             this.alertCtrl.create({
             title: "Error",
-            message: res.message
+            message: "Could not set up notifications"
           }).present();
         }
       });
     })
   }
 
-  revokeToken = function(){
-    this.push.unregister().then((t: PushToken) => {
-      console.log('Revokeing Token => ', t);
-      RevokeToken(this.http, this.storage, t).then((res) => {
-          if(res.success === false){
-            this.alertCtrl.create({
-            title: "Token Invalidation Error",
-            message: res.message
-          }).present();
-        } else {
-          this.alertCtrl.create({
-            title: "Success",
-            message: "Successfull logout"
-          })
-        }
+  revokeToken = function(){ //Revoke the token that we have
+    this.push.unregister().then(() => {   //Notify Ionic that the app is unregistered.
+      this.storage.ready().then(() =>{  //get the token from storage
+        this.storage.set('number', "");
+        this.storage.set('role', "");
+        this.storage.set('email', "");
+        this.storage.set('password', "");
+        this.storage.set('logged_in', false);
+        this.storage.get('pushToken').then(token => {
+          console.log('Revokeing Token => ', token);  // log the token.
+          RevokeToken(this.http, this.storage, token).then((res) => {
+            if(res.success === false){
+              this.alertCtrl.create({
+                title: "Token Invalidation Error",
+                message: res.message
+              }).present();
+            } else {
+              this.alertCtrl.create({
+                title: "Success",
+                message: "Successfull logout"
+              }).present();
+            }
+          });
+        })
       });
     });
   }

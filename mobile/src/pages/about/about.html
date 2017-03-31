@@ -102,7 +102,7 @@
     </ion-list>
 
 
-    <div *ngIf="!items.length && !backupcalls.length" class="loggedOut">
+    <div *ngIf="loggedIn && !items.length && !backupcalls.length" class="loggedOut">
       <ion-icon name="help-buoy"></ion-icon>
       <h1>I find your lack of help disturbing.</h1>
     </div>

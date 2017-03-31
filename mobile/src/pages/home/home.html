@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-toolbar class="call_dispatch">
+  <ion-toolbar *ngIf="loggedIn" class="call_dispatch">
     <a href="tel:7182221800">
         <ion-title>Call Dispatch</ion-title>
     </a>
@@ -19,7 +19,6 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <!--Toolbar with "Call Dispatch that links to tel:7182221800-->
   <div *ngIf="loggedIn">
     <ion-list *ngIf="items.length">
       <ion-item-sliding *ngFor="let item of items">
@@ -66,7 +65,7 @@
     </div>
   </div>
 
-  <ion-fab *ngIf="canEdit" right bottom>
+  <ion-fab *ngIf="loggedIn && canEdit" right bottom>
     <button ion-fab color="light" (click)="addItem()"><ion-icon name="add"></ion-icon></button>
   </ion-fab>
 
@@ -76,7 +75,3 @@
   </div>
 
 </ion-content>
-
-<ion-footer>
-  
-</ion-footer>

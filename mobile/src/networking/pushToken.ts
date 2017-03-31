@@ -32,13 +32,13 @@ export const SendToken = function(http: Http, storage: Storage, token:PushToken)
     });
 }
 
-export const RevokeToken = function(http: Http, storage: Storage, token:PushToken){
+export const RevokeToken = function(http: Http, storage: Storage, token:String){
     return new Promise<{success:boolean, message:string}>((resolve, reject) => {
         if(token === undefined || token === null){
-            resolve({success: true, message: "No token to revoke"});
+            resolve({success: false, message: "No token to revoke"});
         }
         authorizedCall(http, storage, httpTypes.DELETE, url, {
-            token: token.token
+            token: token
         })
         .then(res => {
             if (res.status = 200){
