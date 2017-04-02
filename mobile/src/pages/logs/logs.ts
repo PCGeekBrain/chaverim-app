@@ -44,7 +44,7 @@ export class LogsPage {
     }
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.updateData();
   }
 

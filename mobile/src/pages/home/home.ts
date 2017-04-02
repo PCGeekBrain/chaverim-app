@@ -159,7 +159,7 @@ export class HomePage {
     return list;
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.updateData();
   }
 

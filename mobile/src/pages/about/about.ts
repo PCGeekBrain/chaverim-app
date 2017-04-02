@@ -120,6 +120,7 @@ export class AboutPage {
   sanitize(url:string){
     return this.sanitizer.bypassSecurityTrustUrl(url);
   }
+  
   replaceSpace(url:string, replacewith:string){
     if(url){
         return url.replace(" ", replacewith);
@@ -128,7 +129,7 @@ export class AboutPage {
     }
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.updateData();
   }
 }
