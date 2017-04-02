@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, Events } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 import { Http } from '@angular/http';
 import { getCallLogs } from '../../networking/calls'
@@ -18,7 +18,7 @@ export class LogsPage {
   loggedIn: boolean;
   items: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
+  constructor(public events: Events, public navCtrl: NavController, public navParams: NavParams,
               public storage: Storage, public http: Http) {
     storage.ready().then(() => {
       storage.get('logged_in').then((res) => {
@@ -26,6 +26,10 @@ export class LogsPage {
       });
     });
     this.items = [];
+
+    this.events.subscribe("user:auth", (value) => {
+      this.loggedIn = value;
+    });
   }
 
   updateData(refresher?){
