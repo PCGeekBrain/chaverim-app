@@ -16,7 +16,7 @@
     <form (ngSubmit)="createCall(newCall)" class="CallBox">
         <ion-item>
             <ion-label>Title</ion-label>
-            <ion-select [(ngModel)]="newCall.title" ngControl="title" [ngModelOptions]="{standalone: true}">
+            <ion-select [(ngModel)]="newCall.title" ngControl="title" [ngModelOptions]="{standalone: true}" multiple="true">
                 <ion-option value="Boost">Boost</ion-option>
                 <ion-option value="Lockout of car">Lockout of car</ion-option>
                 <ion-option value="Lockout of a House">Lockout of a House</ion-option>
