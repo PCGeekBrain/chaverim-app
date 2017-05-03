@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.chaverimch.mobile" version="1.5" versionCode="360" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.chaverimch.mobile" version="1.5.1" versionCode="360" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>CH Chaverim</name>
   <description>Internal Chaverim Dispatcher</description>
   <author email="admin@cahverimch.com" href="http://chaverimch.com/">Ionic Framework Team</author>
