@@ -13,7 +13,7 @@ const url = URL + '/api/device/register'
  * @param storage Ionic storage instance
  */
 export const SendToken = function(http: Http, storage: Storage, token:PushToken){
-    return new Promise<{success:boolean, message:string}>((resolve, reject) => {
+    return new Promise<{success:boolean, message?:string, data?:any}>((resolve, reject) => {
         authorizedCall(http, storage, httpTypes.POST, url, {
             token: token.token
         })
@@ -21,7 +21,8 @@ export const SendToken = function(http: Http, storage: Storage, token:PushToken)
             if (res.status = 200){
                 resolve(JSON.parse(res._body));
             } else {
-                resolve(JSON.parse(res._body));
+                var result = 
+                resolve({success: false, data: JSON.parse(res._body)});
             }
         })
         .catch(err => {
