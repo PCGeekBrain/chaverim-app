@@ -33,3 +33,5 @@ mobile/version1.0/
 mobile/.DS_Store
 mobile/Thumbs.db
 mobile/UserInterfaceState.xcuserstate
+
+.DS_STORE
