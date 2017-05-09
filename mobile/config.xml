@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.chaverimch.mobile" version="1.6" versionCode="660" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-packageName="com.chaverimch.mobileapp" id="com.chaverimch.mobile" version="1.6" versionCode="660" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>CH Chaverim</name>
     <description>Internal Chaverim Dispatcher</description>
     <author email="admin@cahverimch.com" href="http://chaverimch.com/">Menachem Hornbacher</author>
